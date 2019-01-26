@@ -68,8 +68,8 @@ disqusShortname = "yourdiscussshortname"
 
         # You can configure the theme parameter for each language.
         [languages.en.params]
-        author = "John Doe"
-        info = "Full Stack DevOps and Magician"
+        author = "Tom Greenwood"
+        info = "data science + dev"
         description = "John Doe's personal website"
         keywords = "blog,developer,personal"
 
