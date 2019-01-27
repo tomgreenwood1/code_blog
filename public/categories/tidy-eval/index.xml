@@ -12,12 +12,13 @@
     
     
     <item>
-      <title>metaprogramming with map(quo) %&gt;% reduce </title>
+      <title>fun with map( expr ) %&gt;% reduce </title>
       <link>/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
-      <description>Ever since I discovered the rlang function ‘expr’ I have become mildy obsessed with the idea of writing code which writes code (I think this falls under the banner of metaprogramming, hence the title of this post). Before launching into anything genuinely useful, some background is required: R is an ‘eagerly evaluated’ language, which means if you write:
+      <description>Ever since I discovered the rlang function ‘expr’ I have become mildy obsessed with the idea of writing code which writes code. This will be the first of probably many posts where I experiment with combining either iteration or recursion with non-standard evaluation. However, before launching into anything genuinely useful, some background is required:
+R is an ‘eagerly evaluated’ language, which means if you write:
 a &amp;lt;- 50 and then just write a and hit enter you get:</description>
     </item>
     
