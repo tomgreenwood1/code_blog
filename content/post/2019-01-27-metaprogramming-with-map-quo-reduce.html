@@ -1,0 +1,180 @@
+---
+title: 'metaprogramming with map(quo) %>% reduce '
+author: Tom Greenwood
+date: '2019-01-27'
+slug: metaprogramming-with-map-quo-reduce
+categories:
+  - R
+  - tidy eval
+  - rlang
+tags:
+  - nse
+  - metaprogramming
+---
+
+
+
+<p>Ever since I discovered the rlang function ‘expr’ I have become mildy obsessed with the idea of writing code which writes code (I think this falls under the banner of metaprogramming, hence the title of this post). Before launching into anything genuinely useful, some background is required: R is an ‘eagerly evaluated’ language, which means if you write:</p>
+<pre class="r"><code>a &lt;- 50</code></pre>
+<p>and then just write a and hit enter you get:</p>
+<pre class="r"><code>a</code></pre>
+<pre><code>## [1] 50</code></pre>
+<p>This become problematic when you want one variable, let’s called it a, to hold the name of
+another variable, b. If you write:</p>
+<pre class="r"><code>a &lt;- b</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;b&#39; not found</code></pre>
+<p>You get an error, because r is eagerly trying to evaluate b, so that is can pass b’s value to a. That’s not r’s fault, that’s just the way it was built.</p>
+<p>Base r does have functions for preventing this, but I’m not even going to talk about those, since the functions from the rlang package are just better, so let’s talk about those instead. with rlang you can write:</p>
+<pre class="r"><code>library(rlang)
+a &lt;- expr(b)
+a</code></pre>
+<pre><code>## b</code></pre>
+<p>This is nice. We haven’t even defined b yet, but we’re now allowed to tell r that a is b.
+rlang also has a function for telling r to go get rid of the ‘expr’ and look underneath to find out what’s in b. The function is eval_tidy(). Let’s assign a value to b first, so that we won’t get an error.</p>
+<pre class="r"><code>b &lt;- &quot;hey here&quot;
+eval_tidy(a)</code></pre>
+<pre><code>## [1] &quot;hey here&quot;</code></pre>
+<p>Additionally, rlang provides a function for ‘unquoting’ i.e. which is essentially like evaluating but only one step down. To demonstrate this, let’s build a slightly bigger expression:</p>
+<pre class="r"><code>c &lt;- expr(d)
+d &lt;- &quot; Tom&quot;
+e &lt;- expr(paste(!!a, !!c, sep = &quot;,&quot;))
+e</code></pre>
+<pre><code>## paste(b, d, sep = &quot;,&quot;)</code></pre>
+<pre class="r"><code>eval_tidy(e)</code></pre>
+<pre><code>## [1] &quot;hey here, Tom&quot;</code></pre>
+<p>Ok, so you get the idea. We can build bigger expressions by unquoting smaller ones inside them. This is where things start to get interesting. One of the things I really hate writing is nested ifelse statements. It’s easy to make a typo and it just feels repetitive. Using map, expr and reduce we can write this function, which will write them for us.</p>
+<pre class="r"><code># we&#39;ll need the purrr package, for it&#39;s map and reduce functions and if_else from dplyr
+library(dplyr, warn.conflicts = FALSE)
+library(purrr, warn.conflicts = FALSE)
+
+build_ifelse &lt;- function(mapping_list, col) { 
+     
+                  col &lt;- enexpr(col)
+                     
+                  mapping_list %&gt;% map(~ list(expr(!!col %in% !!.[[2]]), .[[1]] ) ) %&gt;%
+                { c(&quot;other&quot;, .) } %&gt;%
+                  reduce(~ expr(if_else(!!(.y[[1]]), !!(.y[[2]]), !!.x )))           
+     
+}</code></pre>
+<p>If we define a mapping that we want to build our if_else statement upon (I always use if_else, rather than ifelse, not becaues it’s faster, but because you know what type you’ll get out)</p>
+<pre class="r"><code># define a mapping 
+i = 1
+numbers &lt;- list()
+pot &lt;- seq(from = 1, to = (26*3), by = 1)
+while (i &lt;= 26) {
+        numbers[[i]] &lt;- sample(pot, 3)
+        pot &lt;- setdiff(pot, numbers %&gt;% unlist)
+        i &lt;- i + 1
+        }
+
+
+mapping &lt;- list(letters, numbers) %&gt;%
+                    transpose
+
+# use the fuction to build the if_else statement
+mapping_exp &lt;- build_ifelse(mapping, number)
+
+# have a look at it
+mapping_exp</code></pre>
+<pre><code>## if_else(number %in% c(33, 51, 77), &quot;z&quot;, if_else(number %in% c(17, 
+## 22, 73), &quot;y&quot;, if_else(number %in% c(42, 64, 75), &quot;x&quot;, if_else(number %in% 
+##     c(68, 53, 10), &quot;w&quot;, if_else(number %in% c(14, 2, 72), &quot;v&quot;, 
+##     if_else(number %in% c(58, 28, 55), &quot;u&quot;, if_else(number %in% 
+##         c(60, 24, 41), &quot;t&quot;, if_else(number %in% c(35, 21, 7), 
+##         &quot;s&quot;, if_else(number %in% c(1, 6, 5), &quot;r&quot;, if_else(number %in% 
+##             c(57, 39, 70), &quot;q&quot;, if_else(number %in% c(30, 40, 
+##         69), &quot;p&quot;, if_else(number %in% c(18, 54, 12), &quot;o&quot;, if_else(number %in% 
+##             c(59, 43, 65), &quot;n&quot;, if_else(number %in% c(9, 13, 
+##         16), &quot;m&quot;, if_else(number %in% c(44, 45, 71), &quot;l&quot;, if_else(number %in% 
+##             c(66, 3, 19), &quot;k&quot;, if_else(number %in% c(20, 62, 
+##         4), &quot;j&quot;, if_else(number %in% c(52, 8, 47), &quot;i&quot;, if_else(number %in% 
+##             c(26, 61, 76), &quot;h&quot;, if_else(number %in% c(29, 31, 
+##         34), &quot;g&quot;, if_else(number %in% c(50, 56, 23), &quot;f&quot;, if_else(number %in% 
+##             c(37, 48, 46), &quot;e&quot;, if_else(number %in% c(74, 27, 
+##         67), &quot;d&quot;, if_else(number %in% c(78, 63, 32), &quot;c&quot;, if_else(number %in% 
+##             c(36, 38, 15), &quot;b&quot;, if_else(number %in% c(49, 11, 
+##         25), &quot;a&quot;, &quot;other&quot;))))))))))))))))))))))))))</code></pre>
+<p>I think it’s fair to say that’s a bit of code you wouldn’t really want to write manually!</p>
+<pre class="r"><code># make a tbl with only numbers to test it on
+number_tbl &lt;- tibble(number = sample(1:120, 10))
+
+# use the expression to find the right letter for each number
+number_tbl %&gt;% mutate(letter = !!mapping_exp)</code></pre>
+<pre><code>## # A tibble: 10 x 2
+##    number letter
+##     &lt;int&gt; &lt;chr&gt; 
+##  1    104 other 
+##  2    101 other 
+##  3     95 other 
+##  4     34 g     
+##  5     76 h     
+##  6     83 other 
+##  7      1 r     
+##  8     78 c     
+##  9     98 other 
+## 10     73 y</code></pre>
+<p>Some provisos here: 1) Really you should use quo, not expr inside functions, because quo tracks it’s environment, and the fact that expr doesn’t can get you into a lot of trouble. So, the function should really be written:</p>
+<pre class="r"><code>build_ifelse1 &lt;- function(mapping_list, col) { 
+     
+                  col &lt;- enquo(col)
+                     
+                  mapping_list %&gt;% map(~ list(quo(!!col %in% !!.[[2]]), .[[1]] ) ) %&gt;%
+                { c(&quot;other&quot;, .) } %&gt;%
+                  reduce(~ quo(if_else(!!(.y[[1]]), !!(.y[[2]]), !!.x )))           
+     
+}</code></pre>
+<p>The reasons I didn’t do it that way, for the purposes of this article is because the expression, when using quo is harder to read.</p>
+<pre class="r"><code># use the fuction to build the if_else statement
+mapping_exp1 &lt;- build_ifelse1(mapping, number)
+
+# have a look at it
+mapping_exp1</code></pre>
+<pre><code>## &lt;quosure&gt;
+## expr: ^if_else(^(^number) %in% &lt;dbl: 33, 51, 77&gt;, &quot;z&quot;, ^if_else(^(^number)
+##            %in% &lt;dbl: 17, 22, 73&gt;, &quot;y&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 42, 64, 75&gt;, &quot;x&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 68, 53, 10&gt;, &quot;w&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 14, 2, 72&gt;, &quot;v&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 58, 28, 55&gt;, &quot;u&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 60, 24, 41&gt;, &quot;t&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 35, 21, 7&gt;, &quot;s&quot;, ^if_else(^(^number) %in% &lt;dbl: 1,
+##             6, 5&gt;, &quot;r&quot;, ^if_else(^(^number) %in% &lt;dbl: 57, 39, 70&gt;, &quot;q&quot;,
+##           ^if_else(^(^number) %in% &lt;dbl: 30, 40, 69&gt;, &quot;p&quot;, ^if_else(^(^number)
+##              %in% &lt;dbl: 18, 54, 12&gt;, &quot;o&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 59, 43, 65&gt;, &quot;n&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 9, 13, 16&gt;, &quot;m&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 44, 45, 71&gt;, &quot;l&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 66, 3, 19&gt;, &quot;k&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 20, 62, 4&gt;, &quot;j&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 52, 8, 47&gt;, &quot;i&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 26, 61, 76&gt;, &quot;h&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 29, 31, 34&gt;, &quot;g&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 50, 56, 23&gt;, &quot;f&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 37, 48, 46&gt;, &quot;e&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 74, 27, 67&gt;, &quot;d&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 78, 63, 32&gt;, &quot;c&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 36, 38, 15&gt;, &quot;b&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 49, 11, 25&gt;, &quot;a&quot;, &quot;other&quot;))))))))))))))))))))))))))
+## env:  0x55a4eb64d060</code></pre>
+<p>Yeah, I can’t read that either.</p>
+<p>Proviso 2) As one of my colleagues pointed out; for this particular example, you can do it more easily with a join:</p>
+<pre class="r"><code>library(tidyr, warn.conflicts = FALSE)
+tibble(letter = letters, number = numbers) %&gt;% 
+            unnest %&gt;% 
+            { left_join(number_tbl, .)}</code></pre>
+<pre><code>## Joining, by = &quot;number&quot;</code></pre>
+<pre><code>## # A tibble: 10 x 2
+##    number letter
+##     &lt;dbl&gt; &lt;chr&gt; 
+##  1    104 &lt;NA&gt;  
+##  2    101 &lt;NA&gt;  
+##  3     95 &lt;NA&gt;  
+##  4     34 g     
+##  5     76 h     
+##  6     83 &lt;NA&gt;  
+##  7      1 r     
+##  8     78 c     
+##  9     98 &lt;NA&gt;  
+## 10     73 y</code></pre>
+<p>Which would have saved some time, but then you wouldn’t have had the pleasure of seeing that massive if_else statement the computer wrote for you, so, pros and cons I guess. I’m
+sure there must be some case where you couldn’t unnest, so you’d need the if_else.</p>

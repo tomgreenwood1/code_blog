@@ -1,0 +1,126 @@
+---
+title: 'metaprogramming with map(quo) %>% reduce '
+author: Tom Greenwood
+date: '2019-01-27'
+slug: metaprogramming-with-map-quo-reduce
+categories:
+  - R
+  - tidy eval
+  - rlang
+tags:
+  - nse
+  - metaprogramming
+---
+
+Ever since I discovered the rlang function 'expr' I have become mildy obsessed with the idea of writing code which writes code (I think this falls under the banner of metaprogramming, hence the title of this post). Before launching into anything genuinely useful, some background is required: R is an 'eagerly evaluated' language, which means if you write:
+```{r}
+a <- 50
+```
+and then just write a and hit enter you get:
+```{r}
+a
+```
+This become problematic when you want one variable, let's called it a, to hold the name of
+another variable, b. If you write:
+```{r error=TRUE}
+a <- b
+```
+You get an error, because r is eagerly trying to evaluate b, so that is can pass b's value to a. That's not r's fault, that's just the way it was built. 
+
+Base r does have functions for preventing this, but I'm not even going to talk about those, since the functions from the rlang package are just better, so let's talk about those instead. with rlang you can write:
+```{r }
+library(rlang)
+a <- expr(b)
+a
+```
+This is nice. We haven't even defined b yet, but we're now allowed to tell r that a is b. 
+rlang also has a function for telling r to go get rid of the 'expr' and look underneath to find out what's in b. The function is eval_tidy(). Let's assign a value to b first, so that we won't get an error.
+``` {r}
+b <- "hey here"
+eval_tidy(a)
+```
+Additionally, rlang provides a function for 'unquoting' i.e. which is essentially like evaluating but only one step down. To demonstrate this, let's build a slightly bigger expression:
+```{r}
+c <- expr(d)
+d <- " Tom"
+e <- expr(paste(!!a, !!c, sep = ","))
+e
+eval_tidy(e)
+```
+Ok, so you get the idea. We can build bigger expressions by unquoting smaller ones inside them. This is where things start to get interesting. One of the things I really hate writing is nested ifelse statements. It's easy to make a typo and it just feels repetitive. Using map, expr and reduce we can write this function, which will write them for us.
+```{r}
+# we'll need the purrr package, for it's map and reduce functions and if_else from dplyr
+library(dplyr, warn.conflicts = FALSE)
+library(purrr, warn.conflicts = FALSE)
+
+build_ifelse <- function(mapping_list, col) { 
+	 
+	              col <- enexpr(col)
+	                 
+	              mapping_list %>% map(~ list(expr(!!col %in% !!.[[2]]), .[[1]] ) ) %>%
+                { c("other", .) } %>%
+	              reduce(~ expr(if_else(!!(.y[[1]]), !!(.y[[2]]), !!.x )))           
+	 
+}
+```
+If we define a mapping that we want to build our if_else statement upon (I always use if_else, rather than ifelse, not becaues it's faster, but because you know what type you'll get out)
+```{r}
+# define a mapping 
+i = 1
+numbers <- list()
+pot <- seq(from = 1, to = (26*3), by = 1)
+while (i <= 26) {
+	    numbers[[i]] <- sample(pot, 3)
+	    pot <- setdiff(pot, numbers %>% unlist)
+	    i <- i + 1
+	    }
+
+
+mapping <- list(letters, numbers) %>%
+		            transpose
+
+# use the fuction to build the if_else statement
+mapping_exp <- build_ifelse(mapping, number)
+
+# have a look at it
+mapping_exp
+```
+I think it's fair to say that's a bit of code you wouldn't really want to write manually!
+```{r}
+# make a tbl with only numbers to test it on
+number_tbl <- tibble(number = sample(1:120, 10))
+
+# use the expression to find the right letter for each number
+number_tbl %>% mutate(letter = !!mapping_exp)
+```
+Some provisos here: 1) Really you should use quo, not expr inside functions, because quo tracks it's environment, and the fact that expr doesn't can get you into a lot of trouble. So, the function should really be written:
+```{r}
+build_ifelse1 <- function(mapping_list, col) { 
+	 
+	              col <- enquo(col)
+	                 
+	              mapping_list %>% map(~ list(quo(!!col %in% !!.[[2]]), .[[1]] ) ) %>%
+                { c("other", .) } %>%
+	              reduce(~ quo(if_else(!!(.y[[1]]), !!(.y[[2]]), !!.x )))           
+	 
+}
+```
+The reasons I didn't do it that way, for the purposes of this article is because the expression, when using quo is harder to read.
+```{r}
+# use the fuction to build the if_else statement
+mapping_exp1 <- build_ifelse1(mapping, number)
+
+# have a look at it
+mapping_exp1
+```
+Yeah, I can't read that either.
+
+Proviso 2) As one of my colleagues pointed out; for this particular example, you can do it more easily with a join:
+```{r}
+library(tidyr, warn.conflicts = FALSE)
+tibble(letter = letters, number = numbers) %>% 
+            unnest %>% 
+            { left_join(number_tbl, .)}
+```
+Which would have saved some time, but then you wouldn't have had the pleasure of seeing that massive if_else statement the computer wrote for you, so, pros and cons I guess. I'm
+sure there must be some case where you couldn't unnest, so you'd need the if_else.
