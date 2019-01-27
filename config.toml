@@ -14,13 +14,16 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     url = "/about/"
 [[menu.main]]
     name = "GitHub"
-    url = "https://github.com/rstudio/blogdown"
+    url = "https://github.com/tomgreenwood1/code_blog"
 [[menu.main]]
-    name = "Twitter"
-    url = "https://twitter.com/rstudio"
+    name = "GitLab"
+    url = "https://gitlab.com/tom-artesia"
+[[menu.main]]
+    name = "Painting"
+    url = "https://www.tomgreenwoodfineart.com"
 
 [params]
-    description = "A website built through Hugo and blogdown."
+    description = "code blog of a late bloomer"
 
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.12.0"
