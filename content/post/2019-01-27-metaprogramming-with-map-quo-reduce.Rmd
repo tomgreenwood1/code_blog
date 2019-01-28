@@ -1,5 +1,5 @@
 ---
-title: 'fun with map( expr ) %>% reduce '
+title: 'fun with map ( expr ) %>% reduce '
 author: Tom Greenwood
 date: '2019-01-27'
 categories:
