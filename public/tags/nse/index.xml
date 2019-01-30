@@ -19,7 +19,7 @@
       <guid>/2019/01/30/writing-a-better-as-formula/</guid>
       <description>The base r function as.formula uses R’s parsing rules, so it ignores white space, but cares about operators. That can lead to problems if the string it’s passed doesn’t obey those rules. For instance
 as.formula(&amp;quot;money ~ brains + looks&amp;quot;) # works ## money ~ brains + looks works fine, but
-as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t work ## gross - pay ~ min - wage + tips doesn’t work, because it can’t recognise that net-worth is a single word.</description>
+as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t work ## gross - pay ~ min - wage + tips doesn’t work, because it confuses hyphens with minus signs.</description>
     </item>
     
     <item>

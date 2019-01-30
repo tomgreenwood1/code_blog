@@ -80,7 +80,7 @@
 <p>works fine, but</p>
 <pre class="r"><code>as.formula(&quot;gross-pay ~ min-wage + tips&quot;) # doesn&#39;t work</code></pre>
 <pre><code>## gross - pay ~ min - wage + tips</code></pre>
-<p>doesn’t work, because it can’t recognise that net-worth is a single word.</p>
+<p>doesn’t work, because it confuses hyphens with minus signs.</p>
 <p>Let’s pause a minute and think of when we might want to use as.formula. A typical example might be when you want to experiment with different formulae on one dataset. e.g.</p>
 <pre class="r"><code>library(purrr)
 library(broom)

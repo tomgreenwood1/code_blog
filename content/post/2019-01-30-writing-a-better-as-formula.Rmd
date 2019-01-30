@@ -19,7 +19,7 @@ works fine, but
 ```{r error=TRUE}
 as.formula("gross-pay ~ min-wage + tips") # doesn't work
 ```
-doesn't work, because it can't recognise that net-worth is a single word. 
+doesn't work, because it confuses hyphens with minus signs. 
 
 Let's pause a minute and think of when we might want to use as.formula. A typical example might be when you want to experiment with different formulae on one dataset. e.g.
 ```{r }
