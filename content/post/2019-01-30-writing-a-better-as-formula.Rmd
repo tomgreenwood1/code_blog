@@ -17,7 +17,7 @@ as.formula("money ~ brains + looks") # works
 ```
 works fine, but
 ```{r error=TRUE}
-as.formula("money ~ net-worth + tips") # doesn't work
+as.formula("gross-pay ~ min-wage + tips") # doesn't work
 ```
 doesn't work, because it can't recognise that net-worth is a single word. 
 
@@ -69,7 +69,7 @@ as_formula <- function(string) {
   
     }
 
-as_formula("money ~ net-worth + tips")
+as_formula("gross-pay ~ min-wage + tips")
 ```
 Let's just try it out on our previous example:
 ```{r}

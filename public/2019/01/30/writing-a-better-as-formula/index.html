@@ -78,8 +78,8 @@
 <pre class="r"><code>as.formula(&quot;money ~ brains + looks&quot;) # works</code></pre>
 <pre><code>## money ~ brains + looks</code></pre>
 <p>works fine, but</p>
-<pre class="r"><code>as.formula(&quot;money ~ net-worth + tips&quot;) # doesn&#39;t work</code></pre>
-<pre><code>## money ~ net - worth + tips</code></pre>
+<pre class="r"><code>as.formula(&quot;gross-pay ~ min-wage + tips&quot;) # doesn&#39;t work</code></pre>
+<pre><code>## gross - pay ~ min - wage + tips</code></pre>
 <p>doesn’t work, because it can’t recognise that net-worth is a single word.</p>
 <p>Let’s pause a minute and think of when we might want to use as.formula. A typical example might be when you want to experiment with different formulae on one dataset. e.g.</p>
 <pre class="r"><code>library(purrr)
@@ -138,8 +138,8 @@ as_formula &lt;- function(string) {
   
     }
 
-as_formula(&quot;money ~ net-worth + tips&quot;)</code></pre>
-<pre><code>## money ~ `net-worth` + tips</code></pre>
+as_formula(&quot;gross-pay ~ min-wage + tips&quot;)</code></pre>
+<pre><code>## `gross-pay` ~ `min-wage` + tips</code></pre>
 <p>Let’s just try it out on our previous example:</p>
 <pre class="r"><code>mtcars1 %&gt;% names %&gt;%                   # get the names
       setdiff(&quot;mpg&quot;) %&gt;%               # take of mpg because that&#39;s what we&#39;ll model
