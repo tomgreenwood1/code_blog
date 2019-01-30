@@ -11,15 +11,15 @@ tags:
 slug: writing-a-better-as-formula
 ---
 
-The base r function as.formula is not very good. It can only handle very basic strings. For instance 
+The base r function as.formula uses R's parsing rules, so it ignores white space, but cares about operators. That can lead to problems if the string it's passed doesn't obey those rules. For instance 
 ```{r iris}
 as.formula("money ~ brains + looks") # works
 ```
-but
+works fine, but
 ```{r error=TRUE}
 as.formula("money ~ net-worth + tips") # doesn't work
 ```
-because it can't recognise that net-worth is a single word. 
+doesn't work, because it can't recognise that net-worth is a single word. 
 
 Let's pause a minute and think of when we might want to use as.formula. A typical example might be when you want to experiment with different formulae on one dataset. e.g.
 ```{r }
