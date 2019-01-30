@@ -1,0 +1,93 @@
+---
+title: re-writing as.formula
+author: Tom Greenwood
+date: '2019-01-30'
+categories:
+  - R
+tags:
+  - formula
+  - new functions
+  - nse
+slug: writing-a-better-as-formula
+---
+
+The base r function as.formula is not very good. It can only handle very basic strings. For instance 
+```{r iris}
+as.formula("money ~ brains + looks") # works
+```
+but
+```{r error=TRUE}
+as.formula("money ~ net-worth + tips") # doesn't work
+```
+because it can't recognise that net-worth is a single word. 
+
+Let's pause a minute and think of when we might want to use as.formula. A typical example might be when you want to experiment with different formulae on one dataset. e.g.
+```{r }
+library(purrr)
+library(broom)
+library(dplyr, warn.conflicts = FALSE)
+
+mtcars %>% names %>%                   # get the names
+      setdiff("mpg") %>%               # take of mpg because that's what we'll model
+      combn(3, simplify = FALSE) %>%   # get all combinations of 3 columns
+      map(~ paste(., collapse = " + ")) %>%   # make the rhs of the formula
+      map_chr(~ paste("mpg ~ ", .)) %>%              # add the lhs
+      tibble(formula = .,                            
+             model = formula %>% map(~lm(as.formula(.), data = mtcars)), # build models
+             r_squared = model %>% map_dbl(. %>% glance %>% .$r.squared) # extract r.squred
+            ) %>%
+      arrange(desc(r_squared))  # find the best formulae
+      
+```
+this is all well and good but imagine if the column names of mtcars were not so neat and tidy.
+``` {r error=TRUE}
+library(dplyr)
+mtcars1 <- mtcars %>% rename(`q-sec` = qsec) 
+
+mtcars1 %>% names %>% # mess up a name
+  setdiff("mpg") %>%               # same
+      combn(3, simplify = FALSE) %>%   # code 
+      map(~ paste(., collapse = " + ")) %>%   # as
+      map(~ paste("mpg ~ ", .)) %>%              # before
+      unlist %>%
+      tibble(formula = ., 
+             model = formula %>% map(~lm(as.formula(.), data = mtcars1)) 
+            )
+```
+So, let's re-write as.formula
+```{r}
+library(stringr)
+library(rlang, warn.conflicts = FALSE)
+
+as_formula <- function(string) {
+  
+  parts <- string %>% str_extract_all("[A-Za-z\\-\\\\]+") %>% .[[1]] %>% syms 
+  target <- parts[[1]]
+  inputs <- parts[-1]
+  rhs <- inputs %>% reduce(~expr(!!.x + !!.y))
+  expr(!!target ~ !!rhs)
+  
+    }
+
+as_formula("money ~ net-worth + tips")
+```
+Let's just try it out on our previous example:
+```{r}
+mtcars1 %>% names %>%                   # get the names
+      setdiff("mpg") %>%               # take of mpg because that's what we'll model
+      combn(3, simplify = FALSE) %>%   # get all combinations of 3 columns
+      map(~ paste(., collapse = " + ")) %>%   # make the rhs of the formula
+      map_chr(~ paste("mpg ~ ", .)) %>%              # add the lhs
+      tibble(formula = .,                            
+             model = formula %>% map(~lm(as_formula(.), data = mtcars1)), # build models
+             r_squared = model %>% map_dbl(. %>% glance %>% .$r.squared) # extract r.squred
+            ) %>%
+      arrange(desc(r_squared))
+```
+Ok, I admit it. This version of as.formula isn't actually better than the original at all, because it can't handle interaction terms, since it assumes you wants '+'s on the rhs of your formula.
+```{r}
+as_formula("bedtime ~ tiredness * coding")
+```
+Clearly isn't correct. Nonetheless, it might be useful in the case when you have complex names and a simple linear model. Maybe it should be called as_linear_formula..
+
+

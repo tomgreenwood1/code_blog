@@ -6,10 +6,19 @@
     <description>Recent content in Tags on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 27 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 30 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Formula</title>
+      <link>/tags/formula/</link>
+      <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/formula/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Metaprogramming</title>
@@ -21,9 +30,18 @@
     </item>
     
     <item>
+      <title>New Functions</title>
+      <link>/tags/new-functions/</link>
+      <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/new-functions/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Nse</title>
       <link>/tags/nse/</link>
-      <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/tags/nse/</guid>
       <description></description>

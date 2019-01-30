@@ -1,0 +1,110 @@
+---
+title: re-writing as.formula
+author: Tom Greenwood
+date: '2019-01-30'
+categories:
+  - R
+tags:
+  - formula
+  - new functions
+  - nse
+slug: writing-a-better-as-formula
+---
+
+
+
+<p>The base r function as.formula is not very good. It can only handle very basic strings. For instance</p>
+<pre class="r"><code>as.formula(&quot;money ~ brains + looks&quot;) # works</code></pre>
+<pre><code>## money ~ brains + looks</code></pre>
+<p>but</p>
+<pre class="r"><code>as.formula(&quot;money ~ net-worth + tips&quot;) # doesn&#39;t work</code></pre>
+<pre><code>## money ~ net - worth + tips</code></pre>
+<p>because it can’t recognise that net-worth is a single word.</p>
+<p>Let’s pause a minute and think of when we might want to use as.formula. A typical example might be when you want to experiment with different formulae on one dataset. e.g.</p>
+<pre class="r"><code>library(purrr)
+library(broom)
+library(dplyr, warn.conflicts = FALSE)
+
+mtcars %&gt;% names %&gt;%                   # get the names
+      setdiff(&quot;mpg&quot;) %&gt;%               # take of mpg because that&#39;s what we&#39;ll model
+      combn(3, simplify = FALSE) %&gt;%   # get all combinations of 3 columns
+      map(~ paste(., collapse = &quot; + &quot;)) %&gt;%   # make the rhs of the formula
+      map_chr(~ paste(&quot;mpg ~ &quot;, .)) %&gt;%              # add the lhs
+      tibble(formula = .,                            
+             model = formula %&gt;% map(~lm(as.formula(.), data = mtcars)), # build models
+             r_squared = model %&gt;% map_dbl(. %&gt;% glance %&gt;% .$r.squared) # extract r.squred
+            ) %&gt;%
+      arrange(desc(r_squared))  # find the best formulae</code></pre>
+<pre><code>## # A tibble: 120 x 3
+##    formula                 model    r_squared
+##    &lt;chr&gt;                   &lt;list&gt;       &lt;dbl&gt;
+##  1 mpg ~  wt + qsec + am   &lt;S3: lm&gt;     0.850
+##  2 mpg ~  cyl + hp + wt    &lt;S3: lm&gt;     0.843
+##  3 mpg ~  cyl + wt + carb  &lt;S3: lm&gt;     0.842
+##  4 mpg ~  hp + wt + am     &lt;S3: lm&gt;     0.840
+##  5 mpg ~  cyl + wt + qsec  &lt;S3: lm&gt;     0.840
+##  6 mpg ~  drat + wt + qsec &lt;S3: lm&gt;     0.837
+##  7 mpg ~  hp + drat + wt   &lt;S3: lm&gt;     0.837
+##  8 mpg ~  hp + wt + gear   &lt;S3: lm&gt;     0.835
+##  9 mpg ~  hp + wt + qsec   &lt;S3: lm&gt;     0.835
+## 10 mpg ~  wt + qsec + gear &lt;S3: lm&gt;     0.833
+## # … with 110 more rows</code></pre>
+<p>this is all well and good but imagine if the column names of mtcars were not so neat and tidy.</p>
+<pre class="r"><code>library(dplyr)
+mtcars1 &lt;- mtcars %&gt;% rename(`q-sec` = qsec) 
+
+mtcars1 %&gt;% names %&gt;% # mess up a name
+  setdiff(&quot;mpg&quot;) %&gt;%               # same
+      combn(3, simplify = FALSE) %&gt;%   # code 
+      map(~ paste(., collapse = &quot; + &quot;)) %&gt;%   # as
+      map(~ paste(&quot;mpg ~ &quot;, .)) %&gt;%              # before
+      unlist %&gt;%
+      tibble(formula = ., 
+             model = formula %&gt;% map(~lm(as.formula(.), data = mtcars1)) 
+            )</code></pre>
+<pre><code>## Error in eval(predvars, data, env): object &#39;sec&#39; not found</code></pre>
+<p>So, let’s re-write as.formula</p>
+<pre class="r"><code>library(stringr)
+library(rlang, warn.conflicts = FALSE)
+
+as_formula &lt;- function(string) {
+  
+  parts &lt;- string %&gt;% str_extract_all(&quot;[A-Za-z\\-\\\\]+&quot;) %&gt;% .[[1]] %&gt;% syms 
+  target &lt;- parts[[1]]
+  inputs &lt;- parts[-1]
+  rhs &lt;- inputs %&gt;% reduce(~expr(!!.x + !!.y))
+  expr(!!target ~ !!rhs)
+  
+    }
+
+as_formula(&quot;money ~ net-worth + tips&quot;)</code></pre>
+<pre><code>## money ~ `net-worth` + tips</code></pre>
+<p>Let’s just try it out on our previous example:</p>
+<pre class="r"><code>mtcars1 %&gt;% names %&gt;%                   # get the names
+      setdiff(&quot;mpg&quot;) %&gt;%               # take of mpg because that&#39;s what we&#39;ll model
+      combn(3, simplify = FALSE) %&gt;%   # get all combinations of 3 columns
+      map(~ paste(., collapse = &quot; + &quot;)) %&gt;%   # make the rhs of the formula
+      map_chr(~ paste(&quot;mpg ~ &quot;, .)) %&gt;%              # add the lhs
+      tibble(formula = .,                            
+             model = formula %&gt;% map(~lm(as_formula(.), data = mtcars1)), # build models
+             r_squared = model %&gt;% map_dbl(. %&gt;% glance %&gt;% .$r.squared) # extract r.squred
+            ) %&gt;%
+      arrange(desc(r_squared))</code></pre>
+<pre><code>## # A tibble: 120 x 3
+##    formula                  model    r_squared
+##    &lt;chr&gt;                    &lt;list&gt;       &lt;dbl&gt;
+##  1 mpg ~  wt + q-sec + am   &lt;S3: lm&gt;     0.850
+##  2 mpg ~  cyl + hp + wt     &lt;S3: lm&gt;     0.843
+##  3 mpg ~  cyl + wt + carb   &lt;S3: lm&gt;     0.842
+##  4 mpg ~  hp + wt + am      &lt;S3: lm&gt;     0.840
+##  5 mpg ~  cyl + wt + q-sec  &lt;S3: lm&gt;     0.840
+##  6 mpg ~  drat + wt + q-sec &lt;S3: lm&gt;     0.837
+##  7 mpg ~  hp + drat + wt    &lt;S3: lm&gt;     0.837
+##  8 mpg ~  hp + wt + gear    &lt;S3: lm&gt;     0.835
+##  9 mpg ~  hp + wt + q-sec   &lt;S3: lm&gt;     0.835
+## 10 mpg ~  wt + q-sec + gear &lt;S3: lm&gt;     0.833
+## # … with 110 more rows</code></pre>
+<p>Ok, I admit it. This version of as.formula isn’t actually better than the original at all, because it can’t handle interaction terms, since it assumes you wants ’+’s on the rhs of your formula.</p>
+<pre class="r"><code>as_formula(&quot;bedtime ~ tiredness * coding&quot;)</code></pre>
+<pre><code>## bedtime ~ tiredness + coding</code></pre>
+<p>Clearly isn’t correct. Nonetheless, it might be useful in the case when you have complex names and a simple linear model. Maybe it should be called as_linear_formula..</p>

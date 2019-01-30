@@ -6,10 +6,22 @@
     <description>Recent content on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 27 Jan 2019 21:48:51 -0700</lastBuildDate>
+    <lastBuildDate>Wed, 30 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>re-writing as.formula</title>
+      <link>/2019/01/30/writing-a-better-as-formula/</link>
+      <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/01/30/writing-a-better-as-formula/</guid>
+      <description>The base r function as.formula is not very good. It can only handle very basic strings. For instance
+as.formula(&amp;quot;money ~ brains + looks&amp;quot;) # works ## money ~ brains + looks but
+as.formula(&amp;quot;money ~ net-worth + tips&amp;quot;) # doesn&amp;#39;t work ## money ~ net - worth + tips because it can’t recognise that net-worth is a single word.
+Let’s pause a minute and think of when we might want to use as.</description>
+    </item>
     
     <item>
       <title>About</title>
