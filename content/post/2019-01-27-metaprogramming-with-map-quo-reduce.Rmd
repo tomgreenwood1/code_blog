@@ -95,7 +95,7 @@ number_tbl <- tibble(number = sample(1:120, 10))
 # use the expression to find the right letter for each number
 number_tbl %>% mutate(letter = !!mapping_exp)
 ```
-Some provisos here: 1) Really you should use quo, not expr inside functions, because quo tracks it's environment, and the fact that expr doesn't can get you into a lot of trouble. So, the function should really be written:
+Some provisos here: 1) Really you should use quo, not expr inside functions, because quo tracks its environment, and the fact that expr doesn't can get you into a lot of trouble. So, the function should really be written:
 ```{r}
 build_ifelse1 <- function(mapping_list, col) { 
 	 
