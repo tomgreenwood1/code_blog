@@ -1,9 +1,9 @@
-{{ if and (not (eq .Site.DisqusShortname "")) (not .Params.disable_comments) }}
+{{ if and (not (eq .Site.greenwoood-rocks"")) (not .Params.disable_comments) }}
 <section id="comments">
   <div id="disqus_thread"></div>
   <script>
   var disqus_config = function () {
-  {{ with .Site.Params.disqusURL }}
+  {{ with .Site.Params.greenwood-rocks }}
     this.page.url = "{{ . }}" +{{ if eq $.Type "404" }} "/404.html" {{ else }} location.pathname{{ end }};
   {{ end }}
   };
