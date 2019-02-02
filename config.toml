@@ -33,6 +33,9 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
     MathJaxCDN = "//cdn.bootcss.com"
     MathJaxVersion = "2.7.5"
+    
+    # disqus
+    disqusURL = "https://greenwood.rocks"
 
     [params.logo]
     url = "logo.png"
