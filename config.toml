@@ -1,4 +1,4 @@
-baseurl = "/"
+baseURL = "https://greenwood.rocks/"
 languageCode = "en-us"
 title = "Tom's code blog"
 theme = "hugo-lithium"
@@ -6,8 +6,10 @@ googleAnalytics = ""
 disqusShortname = "greenwood-rocks"
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
+
 [permalinks]
     post = "/:year/:month/:day/:slug/"
+    
 
 [[menu.main]]
     name = "About"
@@ -23,7 +25,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     url = "https://tomgreenwoodfineart.com"
 
 [params]
-    description = "code blog of a late bloomer"
+    description = "code blog"
 
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.12.0"

@@ -3,81 +3,81 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/2019/01/30/writing-a-better-as-formula/</loc>
+    <loc>https://greenwood.rocks/2019/01/30/writing-a-better-as-formula/</loc>
     <lastmod>2019-01-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/about/</loc>
+    <loc>https://greenwood.rocks/about/</loc>
     <lastmod>2019-01-27T21:48:51-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/2019/01/27/metaprogramming-with-map-quo-reduce/</loc>
+    <loc>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</loc>
     <lastmod>2019-01-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>https://greenwood.rocks/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/formula/</loc>
+    <loc>https://greenwood.rocks/tags/formula/</loc>
     <lastmod>2019-01-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/metaprogramming/</loc>
-    <lastmod>2019-01-27T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/new-functions/</loc>
-    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/nse/</loc>
-    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
-    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/r/</loc>
-    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/rlang/</loc>
+    <loc>https://greenwood.rocks/tags/metaprogramming/</loc>
     <lastmod>2019-01-27T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/</loc>
+    <loc>https://greenwood.rocks/tags/new-functions/</loc>
     <lastmod>2019-01-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/categories/tidy-eval/</loc>
+    <loc>https://greenwood.rocks/tags/nse/</loc>
+    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://greenwood.rocks/post/</loc>
+    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://greenwood.rocks/categories/r/</loc>
+    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://greenwood.rocks/categories/rlang/</loc>
     <lastmod>2019-01-27T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/</loc>
+    <loc>https://greenwood.rocks/tags/</loc>
+    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://greenwood.rocks/categories/tidy-eval/</loc>
+    <lastmod>2019-01-27T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://greenwood.rocks/</loc>
     <lastmod>2019-01-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>

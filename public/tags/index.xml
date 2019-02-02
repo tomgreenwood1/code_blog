@@ -2,48 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Tom&#39;s code blog</title>
-    <link>/tags/</link>
+    <link>https://greenwood.rocks/tags/</link>
     <description>Recent content in Tags on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 30 Jan 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://greenwood.rocks/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Formula</title>
-      <link>/tags/formula/</link>
+      <link>https://greenwood.rocks/tags/formula/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/formula/</guid>
+      <guid>https://greenwood.rocks/tags/formula/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Metaprogramming</title>
-      <link>/tags/metaprogramming/</link>
+      <link>https://greenwood.rocks/tags/metaprogramming/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/metaprogramming/</guid>
+      <guid>https://greenwood.rocks/tags/metaprogramming/</guid>
       <description></description>
     </item>
     
     <item>
       <title>New Functions</title>
-      <link>/tags/new-functions/</link>
+      <link>https://greenwood.rocks/tags/new-functions/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/new-functions/</guid>
+      <guid>https://greenwood.rocks/tags/new-functions/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Nse</title>
-      <link>/tags/nse/</link>
+      <link>https://greenwood.rocks/tags/nse/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/nse/</guid>
+      <guid>https://greenwood.rocks/tags/nse/</guid>
       <description></description>
     </item>
     

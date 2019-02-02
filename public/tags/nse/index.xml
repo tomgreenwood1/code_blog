@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nse on Tom&#39;s code blog</title>
-    <link>/tags/nse/</link>
+    <link>https://greenwood.rocks/tags/nse/</link>
     <description>Recent content in Nse on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 30 Jan 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/nse/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://greenwood.rocks/tags/nse/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>re-writing as.formula</title>
-      <link>/2019/01/30/writing-a-better-as-formula/</link>
+      <link>https://greenwood.rocks/2019/01/30/writing-a-better-as-formula/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/01/30/writing-a-better-as-formula/</guid>
+      <guid>https://greenwood.rocks/2019/01/30/writing-a-better-as-formula/</guid>
       <description>The base r function as.formula uses R’s parsing rules, so it ignores white space, but cares about operators. That can lead to problems if the string it’s passed doesn’t obey those rules. For instance
 as.formula(&amp;quot;money ~ brains + looks&amp;quot;) # works ## money ~ brains + looks works fine, but
 as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t work ## gross - pay ~ min - wage + tips doesn’t work, because it confuses hyphens with minus signs.</description>
@@ -24,10 +24,10 @@ as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t wo
     
     <item>
       <title>fun with map ( expr ) %&gt;% reduce </title>
-      <link>/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
+      <link>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
+      <guid>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
       <description>Ever since I discovered the rlang function ‘expr’ I have become mildy obsessed with the idea of writing code which writes code. This will be the first of probably many posts where I experiment with combining either iteration or recursion with non-standard evaluation. However, before launching into anything genuinely useful, some background is required:
 R is an ‘eagerly evaluated’ language, which means if you write:
 a &amp;lt;- 50 and then just write a and hit enter you get:</description>

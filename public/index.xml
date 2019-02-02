@@ -1,46 +1,308 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tom&#39;s code blog</title>
-    <link>/</link>
-    <description>Recent content on Tom&#39;s code blog</description>
+    <title>Tom&#39;s code blog on Tom&#39;s code blog</title>
+    <link>https://greenwood.rocks/</link>
+    <description>Recent content in Tom&#39;s code blog on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 30 Jan 2019 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
-    
+    <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
       <title>re-writing as.formula</title>
-      <link>/2019/01/30/writing-a-better-as-formula/</link>
+      <link>https://greenwood.rocks/2019/01/30/writing-a-better-as-formula/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/01/30/writing-a-better-as-formula/</guid>
-      <description>The base r function as.formula uses R’s parsing rules, so it ignores white space, but cares about operators. That can lead to problems if the string it’s passed doesn’t obey those rules. For instance
-as.formula(&amp;quot;money ~ brains + looks&amp;quot;) # works ## money ~ brains + looks works fine, but
-as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t work ## gross - pay ~ min - wage + tips doesn’t work, because it confuses hyphens with minus signs.</description>
+      <guid>https://greenwood.rocks/2019/01/30/writing-a-better-as-formula/</guid>
+      <description>
+
+
+&lt;p&gt;The base r function as.formula uses R’s parsing rules, so it ignores white space, but cares about operators. That can lead to problems if the string it’s passed doesn’t obey those rules. For instance&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;as.formula(&amp;quot;money ~ brains + looks&amp;quot;) # works&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## money ~ brains + looks&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;works fine, but&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t work&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## gross - pay ~ min - wage + tips&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;doesn’t work, because it confuses hyphens with minus signs.&lt;/p&gt;
+&lt;p&gt;Let’s pause a minute and think of when we might want to use as.formula. A typical example might be when you want to experiment with different formulae on one dataset. e.g.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(purrr)
+library(broom)
+library(dplyr, warn.conflicts = FALSE)
+
+mtcars %&amp;gt;% names %&amp;gt;%                   # get the names
+      setdiff(&amp;quot;mpg&amp;quot;) %&amp;gt;%               # take of mpg because that&amp;#39;s what we&amp;#39;ll model
+      combn(3, simplify = FALSE) %&amp;gt;%   # get all combinations of 3 columns
+      map(~ paste(., collapse = &amp;quot; + &amp;quot;)) %&amp;gt;%   # make the rhs of the formula
+      map_chr(~ paste(&amp;quot;mpg ~ &amp;quot;, .)) %&amp;gt;%              # add the lhs
+      tibble(formula = .,                            
+             model = formula %&amp;gt;% map(~lm(as.formula(.), data = mtcars)), # build models
+             r_squared = model %&amp;gt;% map_dbl(. %&amp;gt;% glance %&amp;gt;% .$r.squared) # extract r.squred
+            ) %&amp;gt;%
+      arrange(desc(r_squared))  # find the best formulae&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 120 x 3
+##    formula                 model    r_squared
+##    &amp;lt;chr&amp;gt;                   &amp;lt;list&amp;gt;       &amp;lt;dbl&amp;gt;
+##  1 mpg ~  wt + qsec + am   &amp;lt;S3: lm&amp;gt;     0.850
+##  2 mpg ~  cyl + hp + wt    &amp;lt;S3: lm&amp;gt;     0.843
+##  3 mpg ~  cyl + wt + carb  &amp;lt;S3: lm&amp;gt;     0.842
+##  4 mpg ~  hp + wt + am     &amp;lt;S3: lm&amp;gt;     0.840
+##  5 mpg ~  cyl + wt + qsec  &amp;lt;S3: lm&amp;gt;     0.840
+##  6 mpg ~  drat + wt + qsec &amp;lt;S3: lm&amp;gt;     0.837
+##  7 mpg ~  hp + drat + wt   &amp;lt;S3: lm&amp;gt;     0.837
+##  8 mpg ~  hp + wt + gear   &amp;lt;S3: lm&amp;gt;     0.835
+##  9 mpg ~  hp + wt + qsec   &amp;lt;S3: lm&amp;gt;     0.835
+## 10 mpg ~  wt + qsec + gear &amp;lt;S3: lm&amp;gt;     0.833
+## # … with 110 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;this is all well and good but imagine if the column names of mtcars were not so neat and tidy.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+mtcars1 &amp;lt;- mtcars %&amp;gt;% rename(`q-sec` = qsec) 
+
+mtcars1 %&amp;gt;% names %&amp;gt;% # mess up a name
+  setdiff(&amp;quot;mpg&amp;quot;) %&amp;gt;%               # same
+      combn(3, simplify = FALSE) %&amp;gt;%   # code 
+      map(~ paste(., collapse = &amp;quot; + &amp;quot;)) %&amp;gt;%   # as
+      map(~ paste(&amp;quot;mpg ~ &amp;quot;, .)) %&amp;gt;%              # before
+      unlist %&amp;gt;%
+      tibble(formula = ., 
+             model = formula %&amp;gt;% map(~lm(as.formula(.), data = mtcars1)) 
+            )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Error in eval(predvars, data, env): object &amp;#39;sec&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So, let’s re-write as.formula&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(stringr)
+library(rlang, warn.conflicts = FALSE)
+
+as_formula &amp;lt;- function(string) {
+  
+  parts &amp;lt;- string %&amp;gt;% str_extract_all(&amp;quot;[A-Za-z\\-\\\\]+&amp;quot;) %&amp;gt;% .[[1]] %&amp;gt;% syms 
+  target &amp;lt;- parts[[1]]
+  inputs &amp;lt;- parts[-1]
+  rhs &amp;lt;- inputs %&amp;gt;% reduce(~expr(!!.x + !!.y))
+  expr(!!target ~ !!rhs)
+  
+    }
+
+as_formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `gross-pay` ~ `min-wage` + tips&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s just try it out on our previous example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mtcars1 %&amp;gt;% names %&amp;gt;%                   # get the names
+      setdiff(&amp;quot;mpg&amp;quot;) %&amp;gt;%               # take of mpg because that&amp;#39;s what we&amp;#39;ll model
+      combn(3, simplify = FALSE) %&amp;gt;%   # get all combinations of 3 columns
+      map(~ paste(., collapse = &amp;quot; + &amp;quot;)) %&amp;gt;%   # make the rhs of the formula
+      map_chr(~ paste(&amp;quot;mpg ~ &amp;quot;, .)) %&amp;gt;%              # add the lhs
+      tibble(formula = .,                            
+             model = formula %&amp;gt;% map(~lm(as_formula(.), data = mtcars1)), # build models
+             r_squared = model %&amp;gt;% map_dbl(. %&amp;gt;% glance %&amp;gt;% .$r.squared) # extract r.squred
+            ) %&amp;gt;%
+      arrange(desc(r_squared))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 120 x 3
+##    formula                  model    r_squared
+##    &amp;lt;chr&amp;gt;                    &amp;lt;list&amp;gt;       &amp;lt;dbl&amp;gt;
+##  1 mpg ~  wt + q-sec + am   &amp;lt;S3: lm&amp;gt;     0.850
+##  2 mpg ~  cyl + hp + wt     &amp;lt;S3: lm&amp;gt;     0.843
+##  3 mpg ~  cyl + wt + carb   &amp;lt;S3: lm&amp;gt;     0.842
+##  4 mpg ~  hp + wt + am      &amp;lt;S3: lm&amp;gt;     0.840
+##  5 mpg ~  cyl + wt + q-sec  &amp;lt;S3: lm&amp;gt;     0.840
+##  6 mpg ~  drat + wt + q-sec &amp;lt;S3: lm&amp;gt;     0.837
+##  7 mpg ~  hp + drat + wt    &amp;lt;S3: lm&amp;gt;     0.837
+##  8 mpg ~  hp + wt + gear    &amp;lt;S3: lm&amp;gt;     0.835
+##  9 mpg ~  hp + wt + q-sec   &amp;lt;S3: lm&amp;gt;     0.835
+## 10 mpg ~  wt + q-sec + gear &amp;lt;S3: lm&amp;gt;     0.833
+## # … with 110 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ok, I admit it. This version of as.formula isn’t actually better than the original at all, because it can’t handle interaction terms, since it assumes you wants ’+’s on the rhs of your formula.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;as_formula(&amp;quot;bedtime ~ tiredness * coding&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## bedtime ~ tiredness + coding&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Clearly isn’t correct. Nonetheless, it might be useful in the case when you have complex names and a simple linear model. Maybe it should be called as_linear_formula..&lt;/p&gt;
+</description>
     </item>
     
     <item>
       <title>About</title>
-      <link>/about/</link>
+      <link>https://greenwood.rocks/about/</link>
       <pubDate>Sun, 27 Jan 2019 21:48:51 -0700</pubDate>
       
-      <guid>/about/</guid>
-      <description>This is the person programming blog of Tom Greenwood (who after this introductory paragraph will henceforth refer to himself in the first person). Most probably, these posts will read as a series of attempts to run before learning to walk. I will enable commenting as soon as I&amp;rsquo;ve learnt how..
-It is built using the blogdown package. The theme was forked from @jrutheiser/hugo-lithium-theme and modified by Yihui Xie and then actually modified a little bit more, by me.</description>
+      <guid>https://greenwood.rocks/about/</guid>
+      <description>&lt;p&gt;This is the person programming blog of Tom Greenwood (who after this introductory paragraph will henceforth refer to himself in the first person). Most probably, these posts will read as a series of attempts to run before learning to walk. I will enable commenting as soon as I&amp;rsquo;ve learnt how..&lt;/p&gt;
+
+&lt;p&gt;It is built using the &lt;a href=&#34;https://github.com/rstudio/blogdown&#34;&gt;&lt;strong&gt;blogdown&lt;/strong&gt;&lt;/a&gt; package. The theme was forked from &lt;a href=&#34;https://github.com/jrutheiser/hugo-lithium-theme&#34;&gt;@jrutheiser/hugo-lithium-theme&lt;/a&gt; and modified by &lt;a href=&#34;https://github.com/yihui/hugo-lithium&#34;&gt;Yihui Xie&lt;/a&gt; and then actually modified a little bit more, by me.&lt;/p&gt;
+</description>
     </item>
     
     <item>
       <title>fun with map ( expr ) %&gt;% reduce </title>
-      <link>/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
+      <link>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
-      <description>Ever since I discovered the rlang function ‘expr’ I have become mildy obsessed with the idea of writing code which writes code. This will be the first of probably many posts where I experiment with combining either iteration or recursion with non-standard evaluation. However, before launching into anything genuinely useful, some background is required:
-R is an ‘eagerly evaluated’ language, which means if you write:
-a &amp;lt;- 50 and then just write a and hit enter you get:</description>
+      <guid>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
+      <description>
+
+
+&lt;p&gt;Ever since I discovered the rlang function ‘expr’ I have become mildy obsessed with the idea of writing code which writes code. This will be the first of probably many posts where I experiment with combining either iteration or recursion with non-standard evaluation. However, before launching into anything genuinely useful, some background is required:&lt;/p&gt;
+&lt;p&gt;R is an ‘eagerly evaluated’ language, which means if you write:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;a &amp;lt;- 50&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and then just write a and hit enter you get:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;a&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 50&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This becomes problematic when you want one variable, let’s called it a, to hold the name of
+another variable, b. If you write:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;a &amp;lt;- b&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Error in eval(expr, envir, enclos): object &amp;#39;b&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You get an error, because r is eagerly trying to evaluate b, so that it can pass b’s value to a. That’s not r’s fault, that’s just the way it was built.&lt;/p&gt;
+&lt;p&gt;Base r does have functions for preventing this, but I’m not even going to talk about those, since the functions from the rlang package are just better, so let’s talk about those instead. with rlang you can write:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rlang)
+a &amp;lt;- expr(b)
+a&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## b&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is nice. We haven’t even defined b yet, but we’re now allowed to tell r that a is b.
+rlang also has a function for telling r to go get rid of the ‘expr’ and look underneath to find out what’s in b. The function is eval_tidy(). Let’s assign a value to b first, so that we won’t get an error.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;b &amp;lt;- &amp;quot;hey here&amp;quot;
+eval_tidy(a)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;hey here&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Additionally, rlang provides a function for ‘unquoting’ i.e. which is essentially like evaluating but only one step down. To demonstrate this, let’s build a slightly bigger expression:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c &amp;lt;- expr(d)
+d &amp;lt;- &amp;quot; Tom&amp;quot;
+e &amp;lt;- expr(paste(!!a, !!c, sep = &amp;quot;,&amp;quot;))
+e&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## paste(b, d, sep = &amp;quot;,&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;eval_tidy(e)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;hey here, Tom&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ok, so you get the idea. We can build bigger expressions by unquoting smaller ones inside them. This is where things start to get interesting. One of the things I really hate writing is nested ifelse statements. It’s easy to make a typo and it just feels repetitive. Using map, expr and reduce we can write this function, which will write them for us.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# we&amp;#39;ll need the purrr package, for it&amp;#39;s map and reduce functions and if_else from dplyr
+library(dplyr, warn.conflicts = FALSE)
+library(purrr, warn.conflicts = FALSE)
+
+build_ifelse &amp;lt;- function(mapping_list, col) { 
+     
+                  col &amp;lt;- enexpr(col)
+                     
+                  mapping_list %&amp;gt;% map(~ list(expr(!!col %in% !!.[[2]]), .[[1]] ) ) %&amp;gt;%
+                { c(&amp;quot;other&amp;quot;, .) } %&amp;gt;%
+                  reduce(~ expr(if_else(!!(.y[[1]]), !!(.y[[2]]), !!.x )))           
+     
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If we define a mapping that we want to build our if_else statement upon (I always use if_else, rather than ifelse, not becaues it’s faster, but because you know what type you’ll get out)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# define a mapping 
+i = 1
+numbers &amp;lt;- list()
+pot &amp;lt;- seq(from = 1, to = (26*3), by = 1)
+while (i &amp;lt;= 26) {
+        numbers[[i]] &amp;lt;- sample(pot, 3)
+        pot &amp;lt;- setdiff(pot, numbers %&amp;gt;% unlist)
+        i &amp;lt;- i + 1
+        }
+
+
+mapping &amp;lt;- list(letters, numbers) %&amp;gt;%
+                    transpose
+
+# use the fuction to build the if_else statement
+mapping_exp &amp;lt;- build_ifelse(mapping, number)
+
+# have a look at it
+mapping_exp&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## if_else(number %in% c(27, 56, 26), &amp;quot;z&amp;quot;, if_else(number %in% c(38, 
+## 8, 50), &amp;quot;y&amp;quot;, if_else(number %in% c(20, 7, 23), &amp;quot;x&amp;quot;, if_else(number %in% 
+##     c(78, 74, 51), &amp;quot;w&amp;quot;, if_else(number %in% c(5, 40, 32), &amp;quot;v&amp;quot;, 
+##     if_else(number %in% c(4, 48, 57), &amp;quot;u&amp;quot;, if_else(number %in% 
+##         c(73, 19, 29), &amp;quot;t&amp;quot;, if_else(number %in% c(9, 75, 72), 
+##         &amp;quot;s&amp;quot;, if_else(number %in% c(39, 25, 53), &amp;quot;r&amp;quot;, if_else(number %in% 
+##             c(69, 6, 36), &amp;quot;q&amp;quot;, if_else(number %in% c(41, 1, 46
+##         ), &amp;quot;p&amp;quot;, if_else(number %in% c(15, 33, 59), &amp;quot;o&amp;quot;, if_else(number %in% 
+##             c(37, 42, 52), &amp;quot;n&amp;quot;, if_else(number %in% c(30, 12, 
+##         61), &amp;quot;m&amp;quot;, if_else(number %in% c(24, 49, 54), &amp;quot;l&amp;quot;, if_else(number %in% 
+##             c(71, 67, 58), &amp;quot;k&amp;quot;, if_else(number %in% c(34, 3, 
+##         68), &amp;quot;j&amp;quot;, if_else(number %in% c(47, 21, 55), &amp;quot;i&amp;quot;, if_else(number %in% 
+##             c(60, 16, 76), &amp;quot;h&amp;quot;, if_else(number %in% c(2, 64, 
+##         43), &amp;quot;g&amp;quot;, if_else(number %in% c(11, 70, 18), &amp;quot;f&amp;quot;, if_else(number %in% 
+##             c(66, 22, 10), &amp;quot;e&amp;quot;, if_else(number %in% c(13, 62, 
+##         45), &amp;quot;d&amp;quot;, if_else(number %in% c(63, 17, 28), &amp;quot;c&amp;quot;, if_else(number %in% 
+##             c(35, 14, 44), &amp;quot;b&amp;quot;, if_else(number %in% c(65, 31, 
+##         77), &amp;quot;a&amp;quot;, &amp;quot;other&amp;quot;))))))))))))))))))))))))))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I think it’s fair to say that’s a bit of code you wouldn’t really want to write manually!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# make a tbl with only numbers to test it on
+number_tbl &amp;lt;- tibble(number = sample(1:120, 10))
+
+# use the expression to find the right letter for each number
+number_tbl %&amp;gt;% mutate(letter = !!mapping_exp)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 2
+##    number letter
+##     &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt; 
+##  1      5 v     
+##  2     28 c     
+##  3     65 a     
+##  4      1 p     
+##  5     38 y     
+##  6     72 s     
+##  7     94 other 
+##  8     32 v     
+##  9     77 a     
+## 10     49 l&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Some provisos here: 1) Really you should use quo, not expr inside functions, because quo tracks its environment, and the fact that expr doesn’t can get you into a lot of trouble. So, the function should really be written:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;build_ifelse1 &amp;lt;- function(mapping_list, col) { 
+     
+                  col &amp;lt;- enquo(col)
+                     
+                  mapping_list %&amp;gt;% map(~ list(quo(!!col %in% !!.[[2]]), .[[1]] ) ) %&amp;gt;%
+                { c(&amp;quot;other&amp;quot;, .) } %&amp;gt;%
+                  reduce(~ quo(if_else(!!(.y[[1]]), !!(.y[[2]]), !!.x )))           
+     
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The reasons I didn’t do it that way, for the purposes of this article is because the expression, when using quo is harder to read.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# use the fuction to build the if_else statement
+mapping_exp1 &amp;lt;- build_ifelse1(mapping, number)
+
+# have a look at it
+mapping_exp1&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;quosure&amp;gt;
+## expr: ^if_else(^(^number) %in% &amp;lt;dbl: 27, 56, 26&amp;gt;, &amp;quot;z&amp;quot;, ^if_else(^(^number)
+##            %in% &amp;lt;dbl: 38, 8, 50&amp;gt;, &amp;quot;y&amp;quot;, ^if_else(^(^number) %in% &amp;lt;dbl: 20,
+##             7, 23&amp;gt;, &amp;quot;x&amp;quot;, ^if_else(^(^number) %in% &amp;lt;dbl: 78, 74, 51&amp;gt;, &amp;quot;w&amp;quot;,
+##           ^if_else(^(^number) %in% &amp;lt;dbl: 5, 40, 32&amp;gt;, &amp;quot;v&amp;quot;, ^if_else(^(^number)
+##              %in% &amp;lt;dbl: 4, 48, 57&amp;gt;, &amp;quot;u&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 73, 19, 29&amp;gt;, &amp;quot;t&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 9, 75, 72&amp;gt;, &amp;quot;s&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 39, 25, 53&amp;gt;, &amp;quot;r&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 69, 6, 36&amp;gt;, &amp;quot;q&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 41, 1, 46&amp;gt;, &amp;quot;p&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 15, 33, 59&amp;gt;, &amp;quot;o&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 37, 42, 52&amp;gt;, &amp;quot;n&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 30, 12, 61&amp;gt;, &amp;quot;m&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 24, 49, 54&amp;gt;, &amp;quot;l&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 71, 67, 58&amp;gt;, &amp;quot;k&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 34, 3, 68&amp;gt;, &amp;quot;j&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 47, 21, 55&amp;gt;, &amp;quot;i&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 60, 16, 76&amp;gt;, &amp;quot;h&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 2, 64, 43&amp;gt;, &amp;quot;g&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 11, 70, 18&amp;gt;, &amp;quot;f&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 66, 22, 10&amp;gt;, &amp;quot;e&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 13, 62, 45&amp;gt;, &amp;quot;d&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 63, 17, 28&amp;gt;, &amp;quot;c&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 35, 14, 44&amp;gt;, &amp;quot;b&amp;quot;, ^if_else(^(^number)
+##               %in% &amp;lt;dbl: 65, 31, 77&amp;gt;, &amp;quot;a&amp;quot;, &amp;quot;other&amp;quot;))))))))))))))))))))))))))
+## env:  0x555cf542f378&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Yeah, I can’t read that either.&lt;/p&gt;
+&lt;p&gt;Proviso 2) As one of my colleagues pointed out; for this particular example, you can do it more easily with a join:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyr, warn.conflicts = FALSE)
+tibble(letter = letters, number = numbers) %&amp;gt;% 
+            unnest %&amp;gt;% 
+            { left_join(number_tbl, .)}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Joining, by = &amp;quot;number&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 2
+##    number letter
+##     &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; 
+##  1      5 v     
+##  2     28 c     
+##  3     65 a     
+##  4      1 p     
+##  5     38 y     
+##  6     72 s     
+##  7     94 &amp;lt;NA&amp;gt;  
+##  8     32 v     
+##  9     77 a     
+## 10     49 l&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which would have saved some time, but then you wouldn’t have had the pleasure of seeing that massive if_else statement the computer wrote for you, so, pros and cons I guess. I’m
+sure there must be some case where you couldn’t unnest, so you’d need the if_else.&lt;/p&gt;
+</description>
     </item>
     
   </channel>
