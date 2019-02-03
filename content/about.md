@@ -1,6 +1,7 @@
 ---
 date: "2019-01-27T21:48:51-07:00"
 title: About
+disable_comments: "TRUE"
 ---
 
 This is the person programming blog of Tom Greenwood (who after this introductory paragraph will henceforth refer to himself in the first person). Most probably, these posts will read as a series of attempts to run before learning to walk. I will enable commenting as soon as I've learnt how.. 
