@@ -8,7 +8,7 @@ tags:
   - formula
   - new functions
   - nse
-slug: writing-a-better-as-formula
+slug: re-writing-as-formula
 ---
 
 The base r function as.formula uses R's parsing rules, so it ignores white space, but cares about operators. That can lead to problems if the string it's passed doesn't obey those rules. For instance 
