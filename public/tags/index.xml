@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>Functions</title>
+      <link>/tags/functions/</link>
+      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/functions/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Metaprogramming</title>
       <link>/tags/metaprogramming/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
@@ -44,6 +53,24 @@
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/tags/nse/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Plotly</title>
+      <link>/tags/plotly/</link>
+      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/plotly/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Visualisation</title>
+      <link>/tags/visualisation/</link>
+      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/visualisation/</guid>
       <description></description>
     </item>
     
