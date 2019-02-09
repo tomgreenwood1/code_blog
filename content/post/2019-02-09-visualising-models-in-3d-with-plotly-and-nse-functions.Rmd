@@ -1,0 +1,66 @@
+---
+title: visualising models in 3d with plotly and nse functions
+author: Tom Greenwood
+date: '2019-02-09'
+slug: visualising-models-in-3d-with-plotly-and-nse-functions
+categories:
+  - R
+tags:
+  - functions
+  - plotly
+  - visualisation
+---
+
+
+
+One of the areas I'm planning to improve on is visualisation. Ultimately, this means D3, but in the meantime I wrote a fairly useful function for showing the fit of a model with two inputs, along with the data, using plotly. First, load the necessary libraries:
+```{r echo=TRUE, message=FALSE}
+library(plotly)
+library(randomForest)
+library(rlang)
+library(dplyr)
+library(magrittr)
+```
+(you could actually write thing function without rlang or magrittr, but it's just a bit neater with them.) Here's the function:
+```{r}
+plot_3d <- function(df, x, y, z) {
+  
+  x <- enquo(x)
+  y <- enquo(y)
+  z <- enquo(z) 
+  
+  # build a model 
+  m <- randomForest(expr(!!get_expr(x) ~ !!get_expr(y) + !!get_expr(z)) %>% as.formula, df)
+  
+  # add the predictions to df
+  df %<>% mutate(preds = predict(m, newdata = df ))
+  
+  plot_ly(df) %>%
+    add_trace(x = x, y = y, z = z, 
+                opacity = 0.7,
+                type = "scatter3d", 
+                mode = "markers",
+                colors = c("grey", "blue"),
+                name = "true values",
+                size = 10
+              ) %>%
+    add_trace(x = ~preds, y = y, z = z,
+                opacity = 0.7,
+                type = "scatter3d", 
+                mode = "markers",
+                name = "modelled values",
+                size = 10
+                ) %>%
+    layout(scene = list(xaxis = list(title = quo_text(x)),
+                        yaxis = list(title = quo_text(y)),
+                        zaxis = list(title = quo_text(z))
+    )
+    )
+  
+}
+
+economics %>% plot_3d(pce, psavert, uempmed)
+```
+Look's like random forrest models are pretty decent for non-linear regression!
+
+

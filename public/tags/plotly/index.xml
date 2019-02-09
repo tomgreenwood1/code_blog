@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Plotly on Tom&#39;s code blog</title>
+    <link>/tags/plotly/</link>
+    <description>Recent content in Plotly on Tom&#39;s code blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 09 Feb 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/plotly/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>visualising models in 3d with plotly and nse functions</title>
+      <link>/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</link>
+      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</guid>
+      <description>One of the areas I’m planning to improve on is visualisation. Ultimately, this means D3, but in the meantime I wrote a fairly useful function for showing the fit of a model with two inputs, along with the data, using plotly. First, load the necessary libraries:
+library(plotly) library(randomForest) library(rlang) library(dplyr) library(magrittr) (you could actually write thing function without rlang or magrittr, but it’s just a bit neater with them.</description>
+    </item>
+    
+  </channel>
+</rss>

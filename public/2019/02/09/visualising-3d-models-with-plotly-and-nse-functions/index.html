@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.53" />
+
+
+<title>visualising 3d models with plotly and nse functions - Tom&#39;s code blog</title>
+<meta property="og:title" content="visualising 3d models with plotly and nse functions - Tom&#39;s code blog">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/tomgreenwood1/code_blog">GitHub</a></li>
+    
+    <li><a href="https://linkedin.com/in/tom-greenwood-01">LinkedIn</a></li>
+    
+    <li><a href="https://tomgreenwoodfineart.com">Painting</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">2 min read</span>
+    
+
+    <h1 class="article-title">visualising 3d models with plotly and nse functions</h1>
+
+    
+    <span class="article-date">2019/02/09</span>
+    
+
+    <div class="article-content">
+      <p>One of the areas I&rsquo;m planning to improve on is visualisation. Ultimately, this means D3, but in the meantime I wrote a fairly useful function for showing the fit of a model with two inputs, along with the data, using plotly. Here it is:</p>
+
+<pre><code class="language-r">library(tidyverse)
+library(plotly)
+library(randomForest)
+
+plot_3d &lt;- function(df, x, y, z) {
+  
+  x &lt;- enquo(x)
+  y &lt;- enquo(y)
+  z &lt;- enquo(z) 
+  
+  xt &lt;- quo_text(x)
+  yt &lt;- quo_text(y)
+  zt &lt;- quo_text(z)
+  
+  # pull the vectors out of the df by name
+  xv &lt;- pull(df, !!x)
+  yv &lt;- pull(df, !!y)
+  zv &lt;- pull(df, !!z)
+  
+  # build a model 
+  m &lt;- randomForest(expr(!!get_expr(x) ~ !!get_expr(y) + !!get_expr(z)) %&gt;% as.formula, df)
+  
+  # make some evenly spaced vectors of the input variables
+  yg &lt;- seq(from = min(yv, na.rm = T), 
+            to = max(yv, na.rm = T), 
+            length.out = 100)
+  zg &lt;- seq(from = min(zv, na.rm = T), 
+            to = max(zv, na.rm = T), 
+            length.out = 100)
+  # make a nice even grid of y and z to predict over
+  grid &lt;- expand.grid(yg, zg) %&gt;% set_names(c(yt, zt))
+                 
+  # make a vector of predictions and then turn it into a matrix for plotly
+  preds &lt;- predict(m, newdata =grid) %&gt;% matrix(100, 100)
+  
+  plot_ly() %&gt;%
+    add_surface(x = yg, y = zg, z = ~preds, 
+                opacity = 0.7,
+                colors = c('#d1d1d1','#000000')) %&gt;%
+    add_trace(x = ~yv, y = ~zv, z = ~xv, 
+                type = &quot;scatter3d&quot;, 
+                mode = &quot;markers&quot;,
+                size = 10) %&gt;%
+    layout(scene = list(xaxis = list(title = quo_text(y)),
+                      yaxis = list(title = quo_text(z)),
+                      zaxis = list(title = quo_text(x))
+                     )
+         )
+  
+}
+
+economics %&gt;% plot_3d(pce, psavert, uempmed)
+</code></pre>
+
+    </div>
+    
+<section class="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+    this.page.url = "https:\/\/greenwood.rocks" + location.pathname;
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var disqus_js = '//greenwood-rocks.disqus.com/embed.js';
+    var d = document, s = d.createElement('script');
+    s.src = disqus_js; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    var b = false, l = function() {
+      if (b) return;
+      (d.head || d.body).appendChild(s); b = true;
+    }
+    var t = d.getElementById('disqus_thread');
+    s.onerror = function(e) {
+      if (sessionStorage.getItem('failure-note')) return;
+      t.innerText = 'Sorry, but you cannot make comments because Disqus failed to load for some reason. It is known to be blocked in China. If you are sure it is not blocked in your region, please refresh the page. 中国大陆地区读者需要翻墙才能发表评论。';
+      t.style.border = '1px dashed';
+      t.style.padding = '.5em';
+      t.style.background = 'lightyellow';
+      sessionStorage.setItem('failure-note', true);
+    };
+    
+    if (location.hash.match(/^#comment/)) return l();
+    var c = function() {
+      if (b) return;
+      var rect = t.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) l();
+    };
+    window.addEventListener('load', c);
+    d.addEventListener('scroll', c);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+  </article>
+
+  
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+            <a href="https://bookdown.org/yihui/blogdown/" class="footer-links-kudos">and <img src="/images/blogdown-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+  </body>
+</html>
+
