@@ -137,24 +137,24 @@ mapping_exp &lt;- build_ifelse(mapping, number)
 
 # have a look at it
 mapping_exp</code></pre>
-<pre><code>## if_else(number %in% c(31, 25, 47), &quot;z&quot;, if_else(number %in% c(43, 
-## 46, 12), &quot;y&quot;, if_else(number %in% c(32, 6, 61), &quot;x&quot;, if_else(number %in% 
-##     c(67, 19, 10), &quot;w&quot;, if_else(number %in% c(11, 2, 48), &quot;v&quot;, 
-##     if_else(number %in% c(27, 20, 69), &quot;u&quot;, if_else(number %in% 
-##         c(60, 9, 55), &quot;t&quot;, if_else(number %in% c(62, 64, 17), 
-##         &quot;s&quot;, if_else(number %in% c(38, 44, 58), &quot;r&quot;, if_else(number %in% 
-##             c(78, 74, 35), &quot;q&quot;, if_else(number %in% c(1, 14, 
-##         33), &quot;p&quot;, if_else(number %in% c(36, 23, 45), &quot;o&quot;, if_else(number %in% 
-##             c(68, 26, 53), &quot;n&quot;, if_else(number %in% c(3, 72, 
-##         18), &quot;m&quot;, if_else(number %in% c(66, 41, 76), &quot;l&quot;, if_else(number %in% 
-##             c(59, 13, 50), &quot;k&quot;, if_else(number %in% c(75, 42, 
-##         30), &quot;j&quot;, if_else(number %in% c(29, 73, 56), &quot;i&quot;, if_else(number %in% 
-##             c(65, 21, 71), &quot;h&quot;, if_else(number %in% c(37, 22, 
-##         40), &quot;g&quot;, if_else(number %in% c(24, 57, 52), &quot;f&quot;, if_else(number %in% 
-##             c(51, 4, 39), &quot;e&quot;, if_else(number %in% c(34, 16, 
-##         70), &quot;d&quot;, if_else(number %in% c(49, 54, 7), &quot;c&quot;, if_else(number %in% 
-##             c(77, 63, 5), &quot;b&quot;, if_else(number %in% c(28, 8, 15
-##         ), &quot;a&quot;, &quot;other&quot;))))))))))))))))))))))))))</code></pre>
+<pre><code>## if_else(number %in% c(32, 30, 56), &quot;z&quot;, if_else(number %in% c(42, 
+## 61, 51), &quot;y&quot;, if_else(number %in% c(12, 19, 27), &quot;x&quot;, if_else(number %in% 
+##     c(43, 33, 31), &quot;w&quot;, if_else(number %in% c(36, 49, 57), &quot;v&quot;, 
+##     if_else(number %in% c(69, 60, 5), &quot;u&quot;, if_else(number %in% 
+##         c(41, 21, 26), &quot;t&quot;, if_else(number %in% c(72, 63, 6), 
+##         &quot;s&quot;, if_else(number %in% c(77, 8, 46), &quot;r&quot;, if_else(number %in% 
+##             c(39, 47, 54), &quot;q&quot;, if_else(number %in% c(14, 38, 
+##         48), &quot;p&quot;, if_else(number %in% c(58, 76, 16), &quot;o&quot;, if_else(number %in% 
+##             c(9, 23, 45), &quot;n&quot;, if_else(number %in% c(52, 62, 
+##         68), &quot;m&quot;, if_else(number %in% c(78, 74, 18), &quot;l&quot;, if_else(number %in% 
+##             c(28, 2, 3), &quot;k&quot;, if_else(number %in% c(10, 1, 64
+##         ), &quot;j&quot;, if_else(number %in% c(66, 17, 71), &quot;i&quot;, if_else(number %in% 
+##             c(20, 35, 50), &quot;h&quot;, if_else(number %in% c(4, 24, 
+##         37), &quot;g&quot;, if_else(number %in% c(40, 73, 7), &quot;f&quot;, if_else(number %in% 
+##             c(75, 34, 44), &quot;e&quot;, if_else(number %in% c(29, 53, 
+##         25), &quot;d&quot;, if_else(number %in% c(55, 59, 67), &quot;c&quot;, if_else(number %in% 
+##             c(11, 22, 70), &quot;b&quot;, if_else(number %in% c(65, 15, 
+##         13), &quot;a&quot;, &quot;other&quot;))))))))))))))))))))))))))</code></pre>
 <p>I think it’s fair to say that’s a bit of code you wouldn’t really want to write manually!</p>
 <pre class="r"><code># make a tbl with only numbers to test it on
 number_tbl &lt;- tibble(number = sample(1:120, 10))
@@ -164,16 +164,16 @@ number_tbl %&gt;% mutate(letter = !!mapping_exp)</code></pre>
 <pre><code>## # A tibble: 10 x 2
 ##    number letter
 ##     &lt;int&gt; &lt;chr&gt; 
-##  1    106 other 
-##  2      4 e     
-##  3    112 other 
-##  4     94 other 
-##  5     17 s     
-##  6    102 other 
-##  7    103 other 
-##  8     38 r     
-##  9     13 k     
-## 10     77 b</code></pre>
+##  1     30 z     
+##  2     56 z     
+##  3     70 b     
+##  4     84 other 
+##  5     68 m     
+##  6     10 j     
+##  7     52 m     
+##  8     48 p     
+##  9     79 other 
+## 10     28 k</code></pre>
 <p>Some provisos here: 1) Really you should use quo, not expr inside functions, because quo tracks its environment, and the fact that expr doesn’t can get you into a lot of trouble. So, the function should really be written:</p>
 <pre class="r"><code>build_ifelse1 &lt;- function(mapping_list, col) { 
      
@@ -191,33 +191,32 @@ mapping_exp1 &lt;- build_ifelse1(mapping, number)
 # have a look at it
 mapping_exp1</code></pre>
 <pre><code>## &lt;quosure&gt;
-## expr: ^if_else(^(^number) %in% &lt;dbl: 31, 25, 47&gt;, &quot;z&quot;, ^if_else(^(^number)
-##            %in% &lt;dbl: 43, 46, 12&gt;, &quot;y&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 32, 6, 61&gt;, &quot;x&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 67, 19, 10&gt;, &quot;w&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 11, 2, 48&gt;, &quot;v&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 27, 20, 69&gt;, &quot;u&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 60, 9, 55&gt;, &quot;t&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 62, 64, 17&gt;, &quot;s&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 38, 44, 58&gt;, &quot;r&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 78, 74, 35&gt;, &quot;q&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 1, 14, 33&gt;, &quot;p&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 36, 23, 45&gt;, &quot;o&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 68, 26, 53&gt;, &quot;n&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 3, 72, 18&gt;, &quot;m&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 66, 41, 76&gt;, &quot;l&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 59, 13, 50&gt;, &quot;k&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 75, 42, 30&gt;, &quot;j&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 29, 73, 56&gt;, &quot;i&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 65, 21, 71&gt;, &quot;h&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 37, 22, 40&gt;, &quot;g&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 24, 57, 52&gt;, &quot;f&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 51, 4, 39&gt;, &quot;e&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 34, 16, 70&gt;, &quot;d&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 49, 54, 7&gt;, &quot;c&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 77, 63, 5&gt;, &quot;b&quot;, ^if_else(^(^number)
-##             %in% &lt;dbl: 28, 8, 15&gt;, &quot;a&quot;, &quot;other&quot;))))))))))))))))))))))))))
-## env:  0x558a2ecc3da8</code></pre>
+## expr: ^if_else(^(^number) %in% &lt;dbl: 32, 30, 56&gt;, &quot;z&quot;, ^if_else(^(^number)
+##            %in% &lt;dbl: 42, 61, 51&gt;, &quot;y&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 12, 19, 27&gt;, &quot;x&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 43, 33, 31&gt;, &quot;w&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 36, 49, 57&gt;, &quot;v&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 69, 60, 5&gt;, &quot;u&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 41, 21, 26&gt;, &quot;t&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 72, 63, 6&gt;, &quot;s&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 77, 8, 46&gt;, &quot;r&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 39, 47, 54&gt;, &quot;q&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 14, 38, 48&gt;, &quot;p&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 58, 76, 16&gt;, &quot;o&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 9, 23, 45&gt;, &quot;n&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 52, 62, 68&gt;, &quot;m&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 78, 74, 18&gt;, &quot;l&quot;, ^if_else(^(^number)
+##             %in% &lt;dbl: 28, 2, 3&gt;, &quot;k&quot;, ^if_else(^(^number) %in% &lt;dbl: 10,
+##             1, 64&gt;, &quot;j&quot;, ^if_else(^(^number) %in% &lt;dbl: 66, 17, 71&gt;, &quot;i&quot;,
+##           ^if_else(^(^number) %in% &lt;dbl: 20, 35, 50&gt;, &quot;h&quot;, ^if_else(^(^number)
+##              %in% &lt;dbl: 4, 24, 37&gt;, &quot;g&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 40, 73, 7&gt;, &quot;f&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 75, 34, 44&gt;, &quot;e&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 29, 53, 25&gt;, &quot;d&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 55, 59, 67&gt;, &quot;c&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 11, 22, 70&gt;, &quot;b&quot;, ^if_else(^(^number)
+##               %in% &lt;dbl: 65, 15, 13&gt;, &quot;a&quot;, &quot;other&quot;))))))))))))))))))))))))))
+## env:  0x557e4e781a90</code></pre>
 <p>Yeah, I can’t read that either.</p>
 <p>Proviso 2) As one of my colleagues pointed out; for this particular example, you can do it more easily with a join:</p>
 <pre class="r"><code>library(tidyr, warn.conflicts = FALSE)
@@ -228,16 +227,16 @@ tibble(letter = letters, number = numbers) %&gt;%
 <pre><code>## # A tibble: 10 x 2
 ##    number letter
 ##     &lt;dbl&gt; &lt;chr&gt; 
-##  1    106 &lt;NA&gt;  
-##  2      4 e     
-##  3    112 &lt;NA&gt;  
-##  4     94 &lt;NA&gt;  
-##  5     17 s     
-##  6    102 &lt;NA&gt;  
-##  7    103 &lt;NA&gt;  
-##  8     38 r     
-##  9     13 k     
-## 10     77 b</code></pre>
+##  1     30 z     
+##  2     56 z     
+##  3     70 b     
+##  4     84 &lt;NA&gt;  
+##  5     68 m     
+##  6     10 j     
+##  7     52 m     
+##  8     48 p     
+##  9     79 &lt;NA&gt;  
+## 10     28 k</code></pre>
 <p>Which would have saved some time, but then you wouldn’t have had the pleasure of seeing that massive if_else statement the computer wrote for you, so, pros and cons I guess. I’m
 sure there must be some case where you couldn’t unnest, so you’d need the if_else.</p>
 

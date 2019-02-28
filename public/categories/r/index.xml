@@ -2,40 +2,40 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>R on Tom&#39;s code blog</title>
-    <link>/categories/r/</link>
+    <link>https://greenwood.rocks/categories/r/</link>
     <description>Recent content in R on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 27 Feb 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://greenwood.rocks/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>shiny modules part 1.</title>
-      <link>/2019/02/27/shiny-modules-part-1/</link>
+      <link>https://greenwood.rocks/2019/02/27/shiny-modules-part-1/</link>
       <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/02/27/shiny-modules-part-1/</guid>
+      <guid>https://greenwood.rocks/2019/02/27/shiny-modules-part-1/</guid>
       <description>I’ve been wanting to learn about shiny modules ever since my shiny-building Italian colleague, Dan, pointed out that they might be a good way to keep the code more organised for bigger apps. My first try was overly ambitious and ended in an untagleable mess of modules within modules that didn’t run, so I decided to go with something nice and simple first off, and build from there. In fact, I’d say that’s a principle I’m sticking with from now on when it comes to building apps: start with something simple and add complexity.</description>
     </item>
     
     <item>
       <title>visualising models in 3d with plotly and nse functions</title>
-      <link>/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</link>
+      <link>https://greenwood.rocks/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</link>
       <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</guid>
+      <guid>https://greenwood.rocks/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</guid>
       <description>One of the areas I’m planning to improve on is visualisation. Ultimately, this means D3, but in the meantime I wrote a fairly useful function for showing the fit of a model with two inputs, along with the data, using plotly. First, load the necessary libraries:
 library(plotly) library(randomForest) library(rlang) library(dplyr) library(magrittr) (you could actually write thing function without rlang or magrittr, but it’s just a bit neater with them.</description>
     </item>
     
     <item>
       <title>re-writing as.formula</title>
-      <link>/2019/01/30/re-writing-as-formula/</link>
+      <link>https://greenwood.rocks/2019/01/30/re-writing-as-formula/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/01/30/re-writing-as-formula/</guid>
+      <guid>https://greenwood.rocks/2019/01/30/re-writing-as-formula/</guid>
       <description>The base r function as.formula uses R’s parsing rules, so it ignores white space, but cares about operators. That can lead to problems if the string it’s passed doesn’t obey those rules. For instance
 as.formula(&amp;quot;money ~ brains + looks&amp;quot;) # works ## money ~ brains + looks works fine, but
 as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t work ## gross - pay ~ min - wage + tips doesn’t work, because it confuses hyphens with minus signs.</description>
@@ -43,10 +43,10 @@ as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t wo
     
     <item>
       <title>fun with map ( expr ) %&gt;% reduce </title>
-      <link>/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
+      <link>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
+      <guid>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
       <description>Ever since I discovered the rlang function ‘expr’ I have become mildy obsessed with the idea of writing code which writes code. This will be the first of probably many posts where I experiment with combining either iteration or recursion with non-standard evaluation. However, before launching into anything genuinely useful, some background is required:
 R is an ‘eagerly evaluated’ language, which means if you write:
 a &amp;lt;- 50 and then just write a and hit enter you get:</description>

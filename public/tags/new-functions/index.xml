@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>New Functions on Tom&#39;s code blog</title>
-    <link>/tags/new-functions/</link>
+    <link>https://greenwood.rocks/tags/new-functions/</link>
     <description>Recent content in New Functions on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 30 Jan 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/new-functions/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://greenwood.rocks/tags/new-functions/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>re-writing as.formula</title>
-      <link>/2019/01/30/re-writing-as-formula/</link>
+      <link>https://greenwood.rocks/2019/01/30/re-writing-as-formula/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/2019/01/30/re-writing-as-formula/</guid>
+      <guid>https://greenwood.rocks/2019/01/30/re-writing-as-formula/</guid>
       <description>The base r function as.formula uses R’s parsing rules, so it ignores white space, but cares about operators. That can lead to problems if the string it’s passed doesn’t obey those rules. For instance
 as.formula(&amp;quot;money ~ brains + looks&amp;quot;) # works ## money ~ brains + looks works fine, but
 as.formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;) # doesn&amp;#39;t work ## gross - pay ~ min - wage + tips doesn’t work, because it confuses hyphens with minus signs.</description>

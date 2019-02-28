@@ -2,47 +2,47 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Tom&#39;s code blog</title>
-    <link>/categories/</link>
+    <link>https://greenwood.rocks/categories/</link>
     <description>Recent content in Categories on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://greenwood.rocks/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>R</title>
-      <link>/categories/r/</link>
+      <link>https://greenwood.rocks/categories/r/</link>
       <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/r/</guid>
+      <guid>https://greenwood.rocks/categories/r/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Rlang</title>
-      <link>/categories/rlang/</link>
+      <link>https://greenwood.rocks/categories/rlang/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/rlang/</guid>
+      <guid>https://greenwood.rocks/categories/rlang/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Shiny</title>
-      <link>/categories/shiny/</link>
+      <link>https://greenwood.rocks/categories/shiny/</link>
       <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/shiny/</guid>
+      <guid>https://greenwood.rocks/categories/shiny/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tidy Eval</title>
-      <link>/categories/tidy-eval/</link>
+      <link>https://greenwood.rocks/categories/tidy-eval/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/tidy-eval/</guid>
+      <guid>https://greenwood.rocks/categories/tidy-eval/</guid>
       <description></description>
     </item>
     
