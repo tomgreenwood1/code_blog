@@ -13,7 +13,7 @@
     <item>
       <title>R</title>
       <link>/categories/r/</link>
-      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
       
       <guid>/categories/r/</guid>
       <description></description>
@@ -25,6 +25,15 @@
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/categories/rlang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Shiny</title>
+      <link>/categories/shiny/</link>
+      <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/shiny/</guid>
       <description></description>
     </item>
     

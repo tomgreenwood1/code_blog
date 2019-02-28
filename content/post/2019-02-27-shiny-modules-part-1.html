@@ -1,0 +1,117 @@
+---
+title: shiny modules part 1.
+author: Tom Greenwood
+date: '2019-02-27'
+slug: shiny-modules-part-1
+categories:
+  - R
+  - shiny
+tags:
+  - shiny modules
+---
+
+
+
+<p>I’ve been wanting to learn about shiny modules ever since my shiny-building Italian colleague, Dan, pointed out that they might be a good way to keep the code more organised for bigger apps. My first try was overly ambitious and ended in an untagleable mess of modules within modules that didn’t run, so I decided to go with something nice and simple first off, and build from there. In fact, I’d say that’s a principle I’m sticking with from now on when it comes to building apps: start with something simple and add complexity. It makes de-bugging way easier.</p>
+<p>Anyway, for those that don’t know, a ‘module’ in shiny is a bit like a function that creates a bit of UI and the server code that goes with that UI. Of course, if you tried to write a function to make those things normally, you’d hit the problem of duplicate input and output names, which will break the app. What modules do is they create distinct namespaces for each time the module is called, so you don’t get the clash of input and output names. This is great for:</p>
+<ol style="list-style-type: decimal">
+<li>When your app code would involve lots of repetition (this is the case with my example app)</li>
+<li>When you want the user to be able to create additional parts of the UI themselves. This is potentially the more poweful use IMO, but it’s more complicated, so hopefully I’ll cover that in another blog.</li>
+</ol>
+<p>Anyway here’s the module is used</p>
+<pre class="r"><code>compare3dsUI &lt;- function(id) {
+  
+  ns &lt;- NS(id)
+  
+ tagList(
+   fluidRow(
+     column(6, 
+      selectInput(inputId =  ns(&quot;follow&quot;), 
+                  label = &quot;highlight one country&quot;,
+                  choices = gapminder$country %&gt;% unique %&gt;% sort 
+                  )
+      ),
+     column(6,
+       sliderTextInput(inputId = ns(&quot;year&quot;),
+                       label = &quot;year&quot;, 
+                       choices = gapminder$year %&gt;% unique,
+                       animate = animationOptions(interval = 2000)
+            )
+   )
+          ), 
+   fluidRow(
+      column(6, plotlyOutput(ns(&quot;contplot&quot;))),
+      column(6, plotlyOutput(ns(&quot;worldplot&quot;)))
+   )
+)
+  
+}
+
+compare3ds &lt;- function(input, output, session, cont) {
+  
+  cont_counts &lt;- reactive({ gapminder %&gt;% filter(continent == cont) %&gt;% 
+                                          pull(country)  })
+  
+  yearData &lt;- reactive({gapminder %&gt;%
+                   mutate(colour = if_else(continent == cont, 1, 2) %&gt;%
+                                   {if_else(country == input$follow, 3, .)}
+                          ) %&gt;%
+                   filter(year == input$year)
+                   
+  })
+  
+  output$contplot &lt;- renderPlotly(yearData() %&gt;% filter(continent == cont) %&gt;% 
+                                    plot_3d(lifeExp, pop, gdpPercap, 
+                                            text = country,
+                                            title = cont,
+                                            color = colour,
+                                            colors = if (input$follow %in% cont_counts()) {
+                                                             c(&quot;red&quot;, &quot;blue&quot;) } else {
+                                                               &quot;red&quot; } 
+                                            
+                                          )
+  )
+  
+  output$worldplot &lt;- renderPlotly(yearData() %&gt;% 
+                                     plot_3d(lifeExp, pop, gdpPercap, 
+                                             text = country,
+                                             title = &quot;World&quot;,
+                                             color = colour,
+                                             colors = c(&quot;red&quot;, &quot;grey&quot;, &quot;blue&quot;)
+                                          )
+  )
+}</code></pre>
+<p>It could be re-written a lot more generic, which would allow it to be used in other apps, but it was late at night when I wrote it and I just couldn’t be bothered. Basically, all you’d need to do it add a load more function arguments in the ‘server’ part of the module for things like colour and variable names etc, and then take those out of the function expression. It uses the plot3d function from <a href="http://greenwood.rocks/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/">this blog post</a>. Then the app UI itself is just:</p>
+<pre class="r"><code>source(&quot;compare3ds.R&quot;)
+
+ui &lt;- navbarPage(&quot;Gapminder modules&quot;, theme = &quot;bootstrap.css&quot;,
+
+        tabPanel(title = &quot;Africa&quot;, 
+                 compare3dsUI(&quot;Africa&quot;)
+              ),
+        tabPanel(title = &quot;Europe&quot;, 
+                 compare3dsUI(&quot;Europe&quot;)
+        ),
+        tabPanel(title = &quot;Americas&quot;, 
+                 compare3dsUI(&quot;Americas&quot;)
+        ),
+        tabPanel(title = &quot;Oceania&quot;, 
+                 compare3dsUI(&quot;Oceania&quot;)
+        ),
+        tabPanel(title = &quot;Asia&quot;, 
+                 compare3dsUI(&quot;Asia&quot;)
+        )
+)</code></pre>
+<p>and the server function is just</p>
+<pre class="r"><code># Define server logic required to draw a histogram
+server &lt;- function(input, output, session) {
+  
+  Africa &lt;- callModule(compare3ds, &quot;Africa&quot;, cont = &quot;Africa&quot;)
+  Europe &lt;- callModule(compare3ds, &quot;Europe&quot;, cont = &quot;Europe&quot;)
+  Americas &lt;- callModule(compare3ds, &quot;Americas&quot;, cont = &quot;Americas&quot;)
+  Oceania &lt;- callModule(compare3ds, &quot;Oceania&quot;, cont = &quot;Oceania&quot;)
+  Asia &lt;- callModule(compare3ds, &quot;Asia&quot;, cont = &quot;Asia&quot;)
+}</code></pre>
+<p>So, basically it save a LOT of typing. Plus it means you can make changes to the module and those changes are replicated. Like I say, I think the real value will be when you combine it will actionButton + insertUI and things like that. I also think that it’s one of those things that once you start using, you’ll never go back, because it just saves you time and keeps your code more compartmentalised, which is all good.</p>
+<p>Here’s the app on shinyapps.io. It’s basically a take Hans Rosling famous animation, but in 3d and with less data. If only the gapminder package just gave you a bit more up-to-date data that would be nice, I’d like to see how things have changed since 2007.</p>
+<iframe width="700" height="400" scrolling="no" frameborder="no" src="https://greenwood.shinyapps.io/gap_mod/">

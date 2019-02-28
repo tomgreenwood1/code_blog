@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R2d3 on Tom&#39;s code blog</title>
+    <link>/tags/r2d3/</link>
+    <description>Recent content in R2d3 on Tom&#39;s code blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 21 Feb 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/r2d3/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>functionalising d3 with r2d3</title>
+      <link>/2019/02/21/functionalising-d3-with-r2d3/</link>
+      <pubDate>Thu, 21 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/02/21/functionalising-d3-with-r2d3/</guid>
+      <description>getwd() ## [1] &amp;quot;/home/tom/Documents/code_blog/content/post&amp;quot; knitr::opts_chunk$get() ## $eval ## [1] TRUE ## ## $echo ## [1] TRUE ## ## $results ## [1] &amp;quot;markup&amp;quot; ## ## $tidy ## [1] FALSE ## ## $tidy.opts ## NULL ## ## $collapse ## [1] FALSE ## ## $prompt ## [1] FALSE ## ## $comment ## [1] &amp;quot;##&amp;quot; ## ## $highlight ## [1] TRUE ## ## $strip.white ## [1] TRUE ## ## $size ## [1] &amp;quot;normalsize&amp;quot; ## ## $background ## [1] &amp;quot;#F7F7F7&amp;quot; ## ## $cache ## [1] FALSE ## ## $cache.</description>
+    </item>
+    
+  </channel>
+</rss>

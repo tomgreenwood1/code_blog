@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.53" />
+
+
+<title>shiny modules part 1. - Tom&#39;s code blog</title>
+<meta property="og:title" content="shiny modules part 1. - Tom&#39;s code blog">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/tomgreenwood1/code_blog">GitHub</a></li>
+    
+    <li><a href="https://linkedin.com/in/tom-greenwood-01">LinkedIn</a></li>
+    
+    <li><a href="https://tomgreenwoodfineart.com">Painting</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">shiny modules part 1.</h1>
+
+    
+    <span class="article-date">2019/02/27</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>I’ve been wanting to learn about shiny modules ever since my shiny-building Italian colleague, Dan, pointed out that they might be a good way to keep the code more organised for bigger apps. My first try was overly ambitious and ended in an untagleable mess of modules within modules that didn’t run, so I decided to go with something nice and simple first off, and build from there. In fact, I’d say that’s a principle I’m sticking with from now on when it comes to building apps: start with something simple and add complexity. It makes de-bugging way easier.</p>
+<p>Anyway, for those that don’t know, a ‘module’ in shiny is a bit like a function that creates a bit of UI and the server code that goes with that UI. Of course, if you tried to write a function to make those things normally, you’d hit the problem of duplicate input and output names, which will break the app. What modules do is they create distinct namespaces for each time the module is called, so you don’t get the clash of input and output names. This is great for:</p>
+<ol style="list-style-type: decimal">
+<li>When your app code would involve lots of repetition (this is the case with my example app)</li>
+<li>When you want the user to be able to create additional parts of the UI themselves. This is potentially the more poweful use IMO, but it’s more complicated, so hopefully I’ll cover that in another blog.</li>
+</ol>
+<p>Anyway here’s the module is used</p>
+<pre class="r"><code>compare3dsUI &lt;- function(id) {
+  
+  ns &lt;- NS(id)
+  
+ tagList(
+   fluidRow(
+     column(6, 
+      selectInput(inputId =  ns(&quot;follow&quot;), 
+                  label = &quot;highlight one country&quot;,
+                  choices = gapminder$country %&gt;% unique %&gt;% sort 
+                  )
+      ),
+     column(6,
+       sliderTextInput(inputId = ns(&quot;year&quot;),
+                       label = &quot;year&quot;, 
+                       choices = gapminder$year %&gt;% unique,
+                       animate = animationOptions(interval = 2000)
+            )
+   )
+          ), 
+   fluidRow(
+      column(6, plotlyOutput(ns(&quot;contplot&quot;))),
+      column(6, plotlyOutput(ns(&quot;worldplot&quot;)))
+   )
+)
+  
+}
+
+compare3ds &lt;- function(input, output, session, cont) {
+  
+  cont_counts &lt;- reactive({ gapminder %&gt;% filter(continent == cont) %&gt;% 
+                                          pull(country)  })
+  
+  yearData &lt;- reactive({gapminder %&gt;%
+                   mutate(colour = if_else(continent == cont, 1, 2) %&gt;%
+                                   {if_else(country == input$follow, 3, .)}
+                          ) %&gt;%
+                   filter(year == input$year)
+                   
+  })
+  
+  output$contplot &lt;- renderPlotly(yearData() %&gt;% filter(continent == cont) %&gt;% 
+                                    plot_3d(lifeExp, pop, gdpPercap, 
+                                            text = country,
+                                            title = cont,
+                                            color = colour,
+                                            colors = if (input$follow %in% cont_counts()) {
+                                                             c(&quot;red&quot;, &quot;blue&quot;) } else {
+                                                               &quot;red&quot; } 
+                                            
+                                          )
+  )
+  
+  output$worldplot &lt;- renderPlotly(yearData() %&gt;% 
+                                     plot_3d(lifeExp, pop, gdpPercap, 
+                                             text = country,
+                                             title = &quot;World&quot;,
+                                             color = colour,
+                                             colors = c(&quot;red&quot;, &quot;grey&quot;, &quot;blue&quot;)
+                                          )
+  )
+}</code></pre>
+<p>It could be re-written a lot more generic, which would allow it to be used in other apps, but it was late at night when I wrote it and I just couldn’t be bothered. Basically, all you’d need to do it add a load more function arguments in the ‘server’ part of the module for things like colour and variable names etc, and then take those out of the function expression. It uses the plot3d function from <a href="http://greenwood.rocks/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/">this blog post</a>. Then the app UI itself is just:</p>
+<pre class="r"><code>source(&quot;compare3ds.R&quot;)
+
+ui &lt;- navbarPage(&quot;Gapminder modules&quot;, theme = &quot;bootstrap.css&quot;,
+
+        tabPanel(title = &quot;Africa&quot;, 
+                 compare3dsUI(&quot;Africa&quot;)
+              ),
+        tabPanel(title = &quot;Europe&quot;, 
+                 compare3dsUI(&quot;Europe&quot;)
+        ),
+        tabPanel(title = &quot;Americas&quot;, 
+                 compare3dsUI(&quot;Americas&quot;)
+        ),
+        tabPanel(title = &quot;Oceania&quot;, 
+                 compare3dsUI(&quot;Oceania&quot;)
+        ),
+        tabPanel(title = &quot;Asia&quot;, 
+                 compare3dsUI(&quot;Asia&quot;)
+        )
+)</code></pre>
+<p>and the server function is just</p>
+<pre class="r"><code># Define server logic required to draw a histogram
+server &lt;- function(input, output, session) {
+  
+  Africa &lt;- callModule(compare3ds, &quot;Africa&quot;, cont = &quot;Africa&quot;)
+  Europe &lt;- callModule(compare3ds, &quot;Europe&quot;, cont = &quot;Europe&quot;)
+  Americas &lt;- callModule(compare3ds, &quot;Americas&quot;, cont = &quot;Americas&quot;)
+  Oceania &lt;- callModule(compare3ds, &quot;Oceania&quot;, cont = &quot;Oceania&quot;)
+  Asia &lt;- callModule(compare3ds, &quot;Asia&quot;, cont = &quot;Asia&quot;)
+}</code></pre>
+<p>So, basically it save a LOT of typing. Plus it means you can make changes to the module and those changes are replicated. Like I say, I think the real value will be when you combine it will actionButton + insertUI and things like that. I also think that it’s one of those things that once you start using, you’ll never go back, because it just saves you time and keeps your code more compartmentalised, which is all good.</p>
+<p>Here’s the app on shinyapps.io. It’s basically a take Hans Rosling famous animation, but in 3d and with less data. If only the gapminder package just gave you a bit more up-to-date data that would be nice, I’d like to see how things have changed since 2007.</p>
+<iframe width="700" height="400" scrolling="no" frameborder="no" src="https://greenwood.shinyapps.io/gap_mod/">
+
+    </div>
+    
+<section class="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+    this.page.url = "https:\/\/greenwood.rocks" + location.pathname;
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var disqus_js = '//greenwood-rocks.disqus.com/embed.js';
+    var d = document, s = d.createElement('script');
+    s.src = disqus_js; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    var b = false, l = function() {
+      if (b) return;
+      (d.head || d.body).appendChild(s); b = true;
+    }
+    var t = d.getElementById('disqus_thread');
+    s.onerror = function(e) {
+      if (sessionStorage.getItem('failure-note')) return;
+      t.innerText = 'Sorry, but you cannot make comments because Disqus failed to load for some reason. It is known to be blocked in China. If you are sure it is not blocked in your region, please refresh the page. 中国大陆地区读者需要翻墙才能发表评论。';
+      t.style.border = '1px dashed';
+      t.style.padding = '.5em';
+      t.style.background = 'lightyellow';
+      sessionStorage.setItem('failure-note', true);
+    };
+    
+    if (location.hash.match(/^#comment/)) return l();
+    var c = function() {
+      if (b) return;
+      var rect = t.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) l();
+    };
+    window.addEventListener('load', c);
+    d.addEventListener('scroll', c);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+  </article>
+
+  
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+            <a href="https://bookdown.org/yihui/blogdown/" class="footer-links-kudos">and <img src="/images/blogdown-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
