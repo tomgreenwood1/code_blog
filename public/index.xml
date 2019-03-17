@@ -2,19 +2,74 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tom&#39;s code blog on Tom&#39;s code blog</title>
-    <link>https://greenwood.rocks/</link>
+    <link>/</link>
     <description>Recent content in Tom&#39;s code blog on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 27 Feb 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 17 Mar 2019 00:00:00 +0000</lastBuildDate>
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>model tuning with automl in auto-sklearn: Part 1</title>
+      <link>/2019/03/17/model-tuning-with-automl-in-auto-sklearn-part1/</link>
+      <pubDate>Sun, 17 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/03/17/model-tuning-with-automl-in-auto-sklearn-part1/</guid>
+      <description>
+
+
+&lt;p&gt;I went to a talk at Bristech on the subject of autoML in Azure. I have to say I was pretty convinced the autoML is the future. Azure’s autoML is built on sklearn (and therefore it’s a python-only SDK), so I did a big of googling and it turns out the autoML with sklearn is actually open-source. You just need to install the ‘auto’sklearn’ package onto your computer and you’re good to go.&lt;/p&gt;
+&lt;p&gt;A few provisos with installing auto-sklean.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;You need a linux environment to run it. My laptop runs Ubuntu, so I didn’t need to do anything but if you’re not on linux then you’ll need a VM (or a container).&lt;/li&gt;
+&lt;li&gt;The dependencies might clash with other versions of packages you have installed. E.g. I had a different version of pandas or numpy or something and, although I went through the auto-sklearn intallation step detailed &lt;a href=&#34;https://automl.github.io/auto-sklearn/stable/installation.html&#34;&gt;here&lt;/a&gt; (yes, auto-sklearn has a very useful website) it wouldn’t run. The way to solve this is to create a fresh environment (I use conda) with&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;conda create -n automl python=3.6
+conda activate automl&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and then follow the installation instructions from the command line and you’ll get an environment excactly as auto-sklearn wants it. Once that’s done, start a python session from within your automl environment and run the auto-sklearn example.&lt;/p&gt;
+&lt;p&gt;As a side point, since I’m actually running this example from within an rmarkdown document, and the python engine for rmakdown is provided by the reticulate package, I’ll tell reticulate with conda env to use to the run the python code.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(reticulate)
+use_condaenv(condaenv = &amp;quot;automl&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;
+import autosklearn.classification
+import sklearn.model_selection
+import sklearn.datasets
+import sklearn.metrics
+X, y = sklearn.datasets.load_digits(return_X_y=True)
+X_train, X_test, y_train, y_test = \
+    sklearn.model_selection.train_test_split(X, y, random_state=1)
+automl = autosklearn.classification.AutoSklearnClassifier()
+automl.fit(X_train, y_train)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [WARNING] [2019-03-17 18:25:11,588:smac.intensification.intensification.Intensifier] Challenger was the same as the current incumbent; Skipping challenger
+## [WARNING] [2019-03-17 18:25:11,588:smac.intensification.intensification.Intensifier] Challenger was the same as the current incumbent; Skipping challenger
+## AutoSklearnClassifier(delete_output_folder_after_terminate=True,
+##            delete_tmp_folder_after_terminate=True,
+##            disable_evaluator_output=False, ensemble_memory_limit=1024,
+##            ensemble_nbest=50, ensemble_size=50, exclude_estimators=None,
+##            exclude_preprocessors=None, get_smac_object_callback=None,
+##            include_estimators=None, include_preprocessors=None,
+##            initial_configurations_via_metalearning=25, logging_config=None,
+##            ml_memory_limit=3072, n_jobs=None, output_folder=None,
+##            per_run_time_limit=360, resampling_strategy=&amp;#39;holdout&amp;#39;,
+##            resampling_strategy_arguments=None, seed=1, shared_mode=False,
+##            smac_scenario_args=None, time_left_for_this_task=3600,
+##            tmp_folder=None)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;y_hat = automl.predict(X_test)
+print(&amp;quot;Accuracy score&amp;quot;, sklearn.metrics.accuracy_score(y_test, y_hat))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Accuracy score 0.9866666666666667&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The automl.fit takes about an hour to run, and I’m actually running it in rmarkdown, for the blog page, so the page take ages to render. Now, the model you’ll get is a pretty large object (the one I got is roughly 500MB), and since it took an hour to build, you’ll probably want to save the model object with.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;filename = &amp;quot;automl_test_model.sav&amp;quot;
+pickle.dump(automl, open(filename, &amp;#39;wb&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and it’s that simple! Actually auto-sklearn has a lot of other options for specficying which cross-validation method to use, and how long to test different models for etc. But like I said, this page already takes and hour to render, so I think other examples with have to be or another post.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>shiny modules part 1.</title>
-      <link>https://greenwood.rocks/2019/02/27/shiny-modules-part-1/</link>
+      <link>/2019/02/27/shiny-modules-part-1/</link>
       <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/2019/02/27/shiny-modules-part-1/</guid>
+      <guid>/2019/02/27/shiny-modules-part-1/</guid>
       <description>
 
 
@@ -128,19 +183,19 @@ server &amp;lt;- function(input, output, session) {
     
     <item>
       <title>visualising models in 3d with plotly and nse functions</title>
-      <link>https://greenwood.rocks/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</link>
+      <link>/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</link>
       <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</guid>
+      <guid>/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</guid>
       <description>
-&lt;script src=&#34;https://greenwood.rocks/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://greenwood.rocks/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://greenwood.rocks/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://greenwood.rocks/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://greenwood.rocks/rmarkdown-libs/crosstalk/css/crosstalk.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://greenwood.rocks/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://greenwood.rocks/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://greenwood.rocks/rmarkdown-libs/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/crosstalk/css/crosstalk.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;One of the areas I’m planning to improve on is visualisation. Ultimately, this means D3, but in the meantime I wrote a fairly useful function for showing the fit of a model with two inputs, along with the data, using plotly. First, load the necessary libraries:&lt;/p&gt;
@@ -195,10 +250,10 @@ Look’s like random forrest models are pretty decent for non-linear regression!
     
     <item>
       <title>re-writing as.formula</title>
-      <link>https://greenwood.rocks/2019/01/30/re-writing-as-formula/</link>
+      <link>/2019/01/30/re-writing-as-formula/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/2019/01/30/re-writing-as-formula/</guid>
+      <guid>/2019/01/30/re-writing-as-formula/</guid>
       <description>
 
 
@@ -302,10 +357,10 @@ as_formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;)&lt;/code&gt;&lt;/pre
     
     <item>
       <title>About</title>
-      <link>https://greenwood.rocks/about/</link>
+      <link>/about/</link>
       <pubDate>Sun, 27 Jan 2019 21:48:51 -0700</pubDate>
       
-      <guid>https://greenwood.rocks/about/</guid>
+      <guid>/about/</guid>
       <description>&lt;p&gt;This is the person programming blog of Tom Greenwood (who after this introductory paragraph will henceforth refer to himself in the first person). Most probably, these posts will read as a series of attempts to run before learning to walk.&lt;/p&gt;
 
 &lt;p&gt;It is built using the &lt;a href=&#34;https://github.com/rstudio/blogdown&#34;&gt;&lt;strong&gt;blogdown&lt;/strong&gt;&lt;/a&gt; package. The theme was forked from &lt;a href=&#34;https://github.com/jrutheiser/hugo-lithium-theme&#34;&gt;@jrutheiser/hugo-lithium-theme&lt;/a&gt; and modified by &lt;a href=&#34;https://github.com/yihui/hugo-lithium&#34;&gt;Yihui Xie&lt;/a&gt; and then actually modified a little bit more, by me.&lt;/p&gt;
@@ -314,10 +369,10 @@ as_formula(&amp;quot;gross-pay ~ min-wage + tips&amp;quot;)&lt;/code&gt;&lt;/pre
     
     <item>
       <title>fun with map ( expr ) %&gt;% reduce </title>
-      <link>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
+      <link>/2019/01/27/metaprogramming-with-map-quo-reduce/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
+      <guid>/2019/01/27/metaprogramming-with-map-quo-reduce/</guid>
       <description>
 
 

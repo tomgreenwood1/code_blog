@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.53" />
+
+
+<title>model tuning with automl in auto-sklearn: Part 1 - Tom&#39;s code blog</title>
+<meta property="og:title" content="model tuning with automl in auto-sklearn: Part 1 - Tom&#39;s code blog">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/tomgreenwood1/code_blog">GitHub</a></li>
+    
+    <li><a href="https://linkedin.com/in/tom-greenwood-01">LinkedIn</a></li>
+    
+    <li><a href="https://tomgreenwoodfineart.com">Painting</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">model tuning with automl in auto-sklearn: Part 1</h1>
+
+    
+    <span class="article-date">2019/03/17</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>I went to a talk at Bristech on the subject of autoML in Azure. I have to say I was pretty convinced the autoML is the future. Azure’s autoML is built on sklearn (and therefore it’s a python-only SDK), so I did a big of googling and it turns out the autoML with sklearn is actually open-source. You just need to install the ‘auto’sklearn’ package onto your computer and you’re good to go.</p>
+<p>A few provisos with installing auto-sklean.</p>
+<ol style="list-style-type: decimal">
+<li>You need a linux environment to run it. My laptop runs Ubuntu, so I didn’t need to do anything but if you’re not on linux then you’ll need a VM (or a container).</li>
+<li>The dependencies might clash with other versions of packages you have installed. E.g. I had a different version of pandas or numpy or something and, although I went through the auto-sklearn intallation step detailed <a href="https://automl.github.io/auto-sklearn/stable/installation.html">here</a> (yes, auto-sklearn has a very useful website) it wouldn’t run. The way to solve this is to create a fresh environment (I use conda) with</li>
+</ol>
+<pre class="bash"><code>conda create -n automl python=3.6
+conda activate automl</code></pre>
+<p>and then follow the installation instructions from the command line and you’ll get an environment excactly as auto-sklearn wants it. Once that’s done, start a python session from within your automl environment and run the auto-sklearn example.</p>
+<p>As a side point, since I’m actually running this example from within an rmarkdown document, and the python engine for rmakdown is provided by the reticulate package, I’ll tell reticulate with conda env to use to the run the python code.</p>
+<pre class="r"><code>library(reticulate)
+use_condaenv(condaenv = &quot;automl&quot;)</code></pre>
+<pre class="python"><code>
+import autosklearn.classification
+import sklearn.model_selection
+import sklearn.datasets
+import sklearn.metrics
+X, y = sklearn.datasets.load_digits(return_X_y=True)
+X_train, X_test, y_train, y_test = \
+    sklearn.model_selection.train_test_split(X, y, random_state=1)
+automl = autosklearn.classification.AutoSklearnClassifier()
+automl.fit(X_train, y_train)</code></pre>
+<pre><code>## [WARNING] [2019-03-17 18:25:11,588:smac.intensification.intensification.Intensifier] Challenger was the same as the current incumbent; Skipping challenger
+## [WARNING] [2019-03-17 18:25:11,588:smac.intensification.intensification.Intensifier] Challenger was the same as the current incumbent; Skipping challenger
+## AutoSklearnClassifier(delete_output_folder_after_terminate=True,
+##            delete_tmp_folder_after_terminate=True,
+##            disable_evaluator_output=False, ensemble_memory_limit=1024,
+##            ensemble_nbest=50, ensemble_size=50, exclude_estimators=None,
+##            exclude_preprocessors=None, get_smac_object_callback=None,
+##            include_estimators=None, include_preprocessors=None,
+##            initial_configurations_via_metalearning=25, logging_config=None,
+##            ml_memory_limit=3072, n_jobs=None, output_folder=None,
+##            per_run_time_limit=360, resampling_strategy=&#39;holdout&#39;,
+##            resampling_strategy_arguments=None, seed=1, shared_mode=False,
+##            smac_scenario_args=None, time_left_for_this_task=3600,
+##            tmp_folder=None)</code></pre>
+<pre class="python"><code>y_hat = automl.predict(X_test)
+print(&quot;Accuracy score&quot;, sklearn.metrics.accuracy_score(y_test, y_hat))</code></pre>
+<pre><code>## Accuracy score 0.9866666666666667</code></pre>
+<p>The automl.fit takes about an hour to run, and I’m actually running it in rmarkdown, for the blog page, so the page take ages to render. Now, the model you’ll get is a pretty large object (the one I got is roughly 500MB), and since it took an hour to build, you’ll probably want to save the model object with.</p>
+<pre class="python"><code>filename = &quot;automl_test_model.sav&quot;
+pickle.dump(automl, open(filename, &#39;wb&#39;))</code></pre>
+<p>and it’s that simple! Actually auto-sklearn has a lot of other options for specficying which cross-validation method to use, and how long to test different models for etc. But like I said, this page already takes and hour to render, so I think other examples with have to be or another post.</p>
+
+    </div>
+    
+<section class="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+    this.page.url = "https:\/\/greenwood.rocks" + location.pathname;
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var disqus_js = '//greenwood-rocks.disqus.com/embed.js';
+    var d = document, s = d.createElement('script');
+    s.src = disqus_js; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    var b = false, l = function() {
+      if (b) return;
+      (d.head || d.body).appendChild(s); b = true;
+    }
+    var t = d.getElementById('disqus_thread');
+    s.onerror = function(e) {
+      if (sessionStorage.getItem('failure-note')) return;
+      t.innerText = 'Sorry, but you cannot make comments because Disqus failed to load for some reason. It is known to be blocked in China. If you are sure it is not blocked in your region, please refresh the page. 中国大陆地区读者需要翻墙才能发表评论。';
+      t.style.border = '1px dashed';
+      t.style.padding = '.5em';
+      t.style.background = 'lightyellow';
+      sessionStorage.setItem('failure-note', true);
+    };
+    
+    if (location.hash.match(/^#comment/)) return l();
+    var c = function() {
+      if (b) return;
+      var rect = t.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) l();
+    };
+    window.addEventListener('load', c);
+    d.addEventListener('scroll', c);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+  </article>
+
+  
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+            <a href="https://bookdown.org/yihui/blogdown/" class="footer-links-kudos">and <img src="/images/blogdown-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

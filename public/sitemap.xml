@@ -3,121 +3,144 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://greenwood.rocks/2019/02/27/shiny-modules-part-1/</loc>
+    <loc>/2019/03/17/model-tuning-with-automl-in-auto-sklearn-part1/</loc>
+    <lastmod>2019-03-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2019/02/27/shiny-modules-part-1/</loc>
     <lastmod>2019-02-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</loc>
+    <loc>/2019/02/09/visualising-models-in-3d-with-plotly-and-nse-functions/</loc>
     <lastmod>2019-02-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/2019/01/30/re-writing-as-formula/</loc>
+    <loc>/2019/01/30/re-writing-as-formula/</loc>
     <lastmod>2019-01-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/about/</loc>
+    <loc>/about/</loc>
     <lastmod>2019-01-27T21:48:51-07:00</lastmod>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/2019/01/27/metaprogramming-with-map-quo-reduce/</loc>
+    <loc>/2019/01/27/metaprogramming-with-map-quo-reduce/</loc>
     <lastmod>2019-01-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/categories/</loc>
+    <loc>/tags/automl/</loc>
+    <lastmod>2019-03-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/formula/</loc>
+    <loc>/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/formula/</loc>
     <lastmod>2019-01-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/functions/</loc>
+    <loc>/tags/functions/</loc>
     <lastmod>2019-02-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/metaprogramming/</loc>
+    <loc>/tags/metaprogramming/</loc>
     <lastmod>2019-01-27T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/new-functions/</loc>
+    <loc>/categories/ml/</loc>
+    <lastmod>2019-03-17T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/new-functions/</loc>
     <lastmod>2019-01-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/nse/</loc>
+    <loc>/tags/nse/</loc>
     <lastmod>2019-01-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/plotly/</loc>
+    <loc>/tags/plotly/</loc>
     <lastmod>2019-02-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/post/</loc>
+    <loc>/post/</loc>
+    <lastmod>2019-03-17T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/python/</loc>
+    <lastmod>2019-03-17T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/r/</loc>
     <lastmod>2019-02-27T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/categories/r/</loc>
-    <lastmod>2019-02-27T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://greenwood.rocks/categories/rlang/</loc>
+    <loc>/categories/rlang/</loc>
     <lastmod>2019-01-27T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/categories/shiny/</loc>
+    <loc>/categories/shiny/</loc>
     <lastmod>2019-02-27T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/shiny-modules/</loc>
+    <loc>/tags/shiny-modules/</loc>
     <lastmod>2019-02-27T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/</loc>
-    <lastmod>2019-01-30T00:00:00+00:00</lastmod>
+    <loc>/tags/</loc>
+    <lastmod>2019-03-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/categories/tidy-eval/</loc>
+    <loc>/categories/tidy-eval/</loc>
     <lastmod>2019-01-27T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/</loc>
-    <lastmod>2019-02-27T00:00:00+00:00</lastmod>
+    <loc>/</loc>
+    <lastmod>2019-03-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://greenwood.rocks/tags/visualisation/</loc>
+    <loc>/tags/visualisation/</loc>
     <lastmod>2019-02-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>

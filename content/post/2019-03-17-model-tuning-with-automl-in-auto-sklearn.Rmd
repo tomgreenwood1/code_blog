@@ -1,0 +1,57 @@
+---
+title: 'model tuning with automl in auto-sklearn: Part 1'
+author: ''
+date: '2019-03-17'
+slug: model-tuning-with-automl-in-auto-sklearn-part1
+categories:
+  - Python
+  - ML
+tags:
+  - automl
+---
+
+I went to a talk at Bristech on the subject of autoML in Azure. I have to say I was pretty convinced the autoML is the future. Azure's autoML is built on sklearn (and therefore it's a python-only SDK), so I did a big of googling and it turns out the autoML with sklearn is actually open-source. You just need to install the 'auto'sklearn' package onto your computer and you're good to go.
+
+A few provisos with installing auto-sklean.
+
+1. You need a linux environment to run it. My laptop runs Ubuntu, so I didn't need to do anything but if you're not on linux then you'll need a VM (or a container).
+2. The dependencies might clash with other versions of packages you have installed. E.g. I had a different version of pandas or numpy or something and, although I went through the auto-sklearn intallation step detailed [here](https://automl.github.io/auto-sklearn/stable/installation.html) (yes, auto-sklearn has a very useful website) it wouldn't run. The way to solve this is to create a fresh environment (I use conda) with
+
+```{bash, eval = FALSE}
+conda create -n automl python=3.6
+conda activate automl
+```
+
+and then follow the installation instructions from the command line and you'll get an environment excactly as auto-sklearn wants it. Once that's done, start a python session from within your automl environment and run the auto-sklearn example.
+
+As a side point, since I'm actually running this example from within an rmarkdown document, and the python engine for rmakdown is provided by the reticulate package, I'll tell reticulate with conda env to use to the run the python code.
+
+``` {r}
+library(reticulate)
+use_condaenv(condaenv = "automl")
+```
+
+``` {python}
+
+import autosklearn.classification
+import sklearn.model_selection
+import sklearn.datasets
+import sklearn.metrics
+X, y = sklearn.datasets.load_digits(return_X_y=True)
+X_train, X_test, y_train, y_test = \
+    sklearn.model_selection.train_test_split(X, y, random_state=1)
+automl = autosklearn.classification.AutoSklearnClassifier()
+automl.fit(X_train, y_train)
+y_hat = automl.predict(X_test)
+print("Accuracy score", sklearn.metrics.accuracy_score(y_test, y_hat))
+
+```
+
+The automl.fit takes about an hour to run, and I'm actually running it in rmarkdown, for the blog page, so the page take ages to render. Now, the model you'll get is a pretty large object (the one I got is roughly 500MB), and since it took an hour to build, you'll probably want to save the model object with. 
+
+``` {python, eval = FALSE}
+filename = "automl_test_model.sav"
+pickle.dump(automl, open(filename, 'wb'))
+```
+
+and it's that simple! Actually auto-sklearn has a lot of other options for specficying which cross-validation method to use, and how long to test different models for etc. But like I said, this page already takes and hour to render, so I think other examples with have to be or another post. 

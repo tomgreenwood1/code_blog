@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Automl on Tom&#39;s code blog</title>
+    <link>/tags/automl/</link>
+    <description>Recent content in Automl on Tom&#39;s code blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 17 Mar 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/automl/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>model tuning with automl in auto-sklearn: Part 1</title>
+      <link>/2019/03/17/model-tuning-with-automl-in-auto-sklearn-part1/</link>
+      <pubDate>Sun, 17 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/03/17/model-tuning-with-automl-in-auto-sklearn-part1/</guid>
+      <description>I went to a talk at Bristech on the subject of autoML in Azure. I have to say I was pretty convinced the autoML is the future. Azure’s autoML is built on sklearn (and therefore it’s a python-only SDK), so I did a big of googling and it turns out the autoML with sklearn is actually open-source. You just need to install the ‘auto’sklearn’ package onto your computer and you’re good to go.</description>
+    </item>
+    
+  </channel>
+</rss>

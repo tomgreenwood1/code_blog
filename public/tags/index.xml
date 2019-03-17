@@ -2,84 +2,93 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Tom&#39;s code blog</title>
-    <link>https://greenwood.rocks/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 17 Mar 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://greenwood.rocks/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Automl</title>
+      <link>/tags/automl/</link>
+      <pubDate>Sun, 17 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/automl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Formula</title>
-      <link>https://greenwood.rocks/tags/formula/</link>
+      <link>/tags/formula/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/tags/formula/</guid>
+      <guid>/tags/formula/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Functions</title>
-      <link>https://greenwood.rocks/tags/functions/</link>
+      <link>/tags/functions/</link>
       <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/tags/functions/</guid>
+      <guid>/tags/functions/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Metaprogramming</title>
-      <link>https://greenwood.rocks/tags/metaprogramming/</link>
+      <link>/tags/metaprogramming/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/tags/metaprogramming/</guid>
+      <guid>/tags/metaprogramming/</guid>
       <description></description>
     </item>
     
     <item>
       <title>New Functions</title>
-      <link>https://greenwood.rocks/tags/new-functions/</link>
+      <link>/tags/new-functions/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/tags/new-functions/</guid>
+      <guid>/tags/new-functions/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Nse</title>
-      <link>https://greenwood.rocks/tags/nse/</link>
+      <link>/tags/nse/</link>
       <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/tags/nse/</guid>
+      <guid>/tags/nse/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Plotly</title>
-      <link>https://greenwood.rocks/tags/plotly/</link>
+      <link>/tags/plotly/</link>
       <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/tags/plotly/</guid>
+      <guid>/tags/plotly/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Shiny Modules</title>
-      <link>https://greenwood.rocks/tags/shiny-modules/</link>
+      <link>/tags/shiny-modules/</link>
       <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/tags/shiny-modules/</guid>
+      <guid>/tags/shiny-modules/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Visualisation</title>
-      <link>https://greenwood.rocks/tags/visualisation/</link>
+      <link>/tags/visualisation/</link>
       <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://greenwood.rocks/tags/visualisation/</guid>
+      <guid>/tags/visualisation/</guid>
       <description></description>
     </item>
     
