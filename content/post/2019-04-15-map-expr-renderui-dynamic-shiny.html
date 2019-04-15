@@ -1,0 +1,143 @@
+---
+title: map(expr) + renderUI -> dynamic shiny
+author: Tom Greenwood
+date: '2019-04-15'
+slug: map-expr-renderui-dynamic-shiny
+categories:
+  - shiny
+  - R
+  - tidy eval
+tags:
+  - nse
+  - shiny
+---
+
+
+
+<p>I wrote my first shiny widget. A shiny widget is an html widget which uses shiny functions. In form it resembles a shiny app very closely, only the shinyApp function is wrapped in another function, which can take whatever arguments you like. More background can be found <a href="https://bookdown.org/yihui/rmarkdown/shiny-widgets.html">here</a>.</p>
+<p>In order for the shiny widget to run, it needs a shiny runtime behind the document, which means it needs a server, just like a shiny app. For that reason, the widget it’s running in this actual document, it’s running on at <a href="https://greenwood.shinyapps.io/filter_widget/#">shinyapps.io</a>. I’ve embedded it below.</p>
+<iframe width="700" height="400" scrolling="yes" frameborder="no" src="https://greenwood.shinyapps.io/filter_widget/">
+</iframe>
+<p>Just a bit of explanation about how it works: The key is in mapping <code>checkboxGroupInput</code> (or some other input function) across the names of the <code>data.frame</code> passed to the widget. A slightly simpler version would be</p>
+<pre class="r"><code>library(shiny)
+library(tidyverse, warn.conflicts = FALSE)
+
+# invent some names
+c(&quot;john&quot;, &quot;paul&quot;, &quot;ringo&quot;) %&gt;%
+# map a suitable shiny input across them
+map(. %&gt;% { expr(checkboxInput(!!., !!. )) } %&gt;%  eval ) %&gt;% 
+tagList </code></pre>
+<div class="form-group shiny-input-container">
+<div class="checkbox">
+<label>
+<input id="john" type="checkbox"/>
+<span>john</span>
+</label>
+</div>
+</div>
+<div class="form-group shiny-input-container">
+<div class="checkbox">
+<label>
+<input id="paul" type="checkbox"/>
+<span>paul</span>
+</label>
+</div>
+</div>
+<div class="form-group shiny-input-container">
+<div class="checkbox">
+<label>
+<input id="ringo" type="checkbox"/>
+<span>ringo</span>
+</label>
+</div>
+</div>
+<p>Let’s break this down one step further. First, why use tagList? Well, because <code>map</code> returns a list, and we don’t want a list, we wants legit html. To see the hmtl in markdown without it rendering need a bit of a workaround, so the next code chunk isn’t actually run, but if you run</p>
+<pre class="r"><code>checkboxInput(&quot;john&quot;, &quot;john&quot;)</code></pre>
+<p>In an R console, what you get is</p>
+<pre class="html"><code>&lt;div class=&quot;form-group shiny-input-container&quot;&gt;
+  &lt;div class=&quot;checkbox&quot;&gt;
+    &lt;label&gt;
+      &lt;input id=&quot;john&quot; type=&quot;checkbox&quot;/&gt;
+      &lt;span&gt;john&lt;/span&gt;
+    &lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>I know I don’t actually use tagList in the widget, I use renderUI, but they’re performing the same role there. In the shinywidget it needs renderUI, but in markdown, outside of a widget you could tagList.</p>
+<p>So, mapping <code>checkboxInput</code> across a list of names gives you a list of chunks of html. <code>tagList</code> just combines a list of chunks of html into one big chunk, without it, you just get the html from the last element of the list (I’m not sure why).</p>
+<pre class="r"><code>list(checkboxInput(&quot;john&quot;, &quot;john&quot;), 
+        checkboxInput(&quot;paul&quot;, &quot;paul&quot;),
+        checkboxInput(&quot;ringo&quot;, &quot;ringo&quot;))</code></pre>
+<pre><code>## [[1]]
+## &lt;div class=&quot;form-group shiny-input-container&quot;&gt;
+##   &lt;div class=&quot;checkbox&quot;&gt;
+##     &lt;label&gt;
+##       &lt;input id=&quot;john&quot; type=&quot;checkbox&quot;/&gt;
+##       &lt;span&gt;john&lt;/span&gt;
+##     &lt;/label&gt;
+##   &lt;/div&gt;
+## &lt;/div&gt;
+## 
+## [[2]]
+## &lt;div class=&quot;form-group shiny-input-container&quot;&gt;
+##   &lt;div class=&quot;checkbox&quot;&gt;
+##     &lt;label&gt;
+##       &lt;input id=&quot;paul&quot; type=&quot;checkbox&quot;/&gt;
+##       &lt;span&gt;paul&lt;/span&gt;
+##     &lt;/label&gt;
+##   &lt;/div&gt;
+## &lt;/div&gt;
+## 
+## [[3]]
+## &lt;div class=&quot;form-group shiny-input-container&quot;&gt;
+##   &lt;div class=&quot;checkbox&quot;&gt;
+##     &lt;label&gt;
+##       &lt;input id=&quot;ringo&quot; type=&quot;checkbox&quot;/&gt;
+##       &lt;span&gt;ringo&lt;/span&gt;
+##     &lt;/label&gt;
+##   &lt;/div&gt;
+## &lt;/div&gt;</code></pre>
+<p>v.s.</p>
+<pre class="r"><code>tagList(checkboxInput(&quot;john&quot;, &quot;john&quot;), 
+        checkboxInput(&quot;paul&quot;, &quot;paul&quot;),
+        checkboxInput(&quot;ringo&quot;, &quot;ringo&quot;))</code></pre>
+<div class="form-group shiny-input-container">
+<div class="checkbox">
+<label>
+<input id="john" type="checkbox"/>
+<span>john</span>
+</label>
+</div>
+</div>
+<div class="form-group shiny-input-container">
+<div class="checkbox">
+<label>
+<input id="paul" type="checkbox"/>
+<span>paul</span>
+</label>
+</div>
+</div>
+<div class="form-group shiny-input-container">
+<div class="checkbox">
+<label>
+<input id="ringo" type="checkbox"/>
+<span>ringo</span>
+</label>
+</div>
+</div>
+<p>And finally, good ol’ map(expr), which makes it easy to create any list of expressions you want.</p>
+<pre class="r"><code>letters[1:5] %&gt;% map(~ expr(selectInput(!!., !!., choices = c(TRUE, FALSE))))</code></pre>
+<pre><code>## [[1]]
+## selectInput(&quot;a&quot;, &quot;a&quot;, choices = c(TRUE, FALSE))
+## 
+## [[2]]
+## selectInput(&quot;b&quot;, &quot;b&quot;, choices = c(TRUE, FALSE))
+## 
+## [[3]]
+## selectInput(&quot;c&quot;, &quot;c&quot;, choices = c(TRUE, FALSE))
+## 
+## [[4]]
+## selectInput(&quot;d&quot;, &quot;d&quot;, choices = c(TRUE, FALSE))
+## 
+## [[5]]
+## selectInput(&quot;e&quot;, &quot;e&quot;, choices = c(TRUE, FALSE))</code></pre>
+<p>And that’s it!</p>

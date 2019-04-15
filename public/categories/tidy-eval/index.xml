@@ -6,10 +6,20 @@
     <description>Recent content in Tidy Eval on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 27 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 15 Apr 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/tidy-eval/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>map(expr) &#43; renderUI -&gt; dynamic shiny</title>
+      <link>/2019/04/15/map-expr-renderui-dynamic-shiny/</link>
+      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/04/15/map-expr-renderui-dynamic-shiny/</guid>
+      <description>I wrote my first shiny widget. A shiny widget is an html widget which uses shiny functions. In form it resembles a shiny app very closely, only the shinyApp function is wrapped in another function, which can take whatever arguments you like. More background can be found here.
+In order for the shiny widget to run, it needs a shiny runtime behind the document, which means it needs a server, just like a shiny app.</description>
+    </item>
     
     <item>
       <title>fun with map ( expr ) %&gt;% reduce </title>

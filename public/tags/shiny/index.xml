@@ -2,13 +2,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Shiny on Tom&#39;s code blog</title>
-    <link>/categories/shiny/</link>
+    <link>/tags/shiny/</link>
     <description>Recent content in Shiny on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 15 Apr 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/categories/shiny/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/shiny/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,15 +19,6 @@
       <guid>/2019/04/15/map-expr-renderui-dynamic-shiny/</guid>
       <description>I wrote my first shiny widget. A shiny widget is an html widget which uses shiny functions. In form it resembles a shiny app very closely, only the shinyApp function is wrapped in another function, which can take whatever arguments you like. More background can be found here.
 In order for the shiny widget to run, it needs a shiny runtime behind the document, which means it needs a server, just like a shiny app.</description>
-    </item>
-    
-    <item>
-      <title>shiny modules part 1.</title>
-      <link>/2019/02/27/shiny-modules-part-1/</link>
-      <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/2019/02/27/shiny-modules-part-1/</guid>
-      <description>I’ve been wanting to learn about shiny modules ever since my shiny-building Italian colleague, Dan, pointed out that they might be a good way to keep the code more organised for bigger apps. My first try was overly ambitious and ended in an untagleable mess of modules within modules that didn’t run, so I decided to go with something nice and simple first off, and build from there. In fact, I’d say that’s a principle I’m sticking with from now on when it comes to building apps: start with something simple and add complexity.</description>
     </item>
     
   </channel>
