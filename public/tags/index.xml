@@ -6,58 +6,13 @@
     <description>Recent content in Tags on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 17 Mar 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 15 Apr 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Automl</title>
-      <link>/tags/automl/</link>
-      <pubDate>Sun, 17 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/automl/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Formula</title>
-      <link>/tags/formula/</link>
-      <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/formula/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Functions</title>
-      <link>/tags/functions/</link>
-      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/functions/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Metaprogramming</title>
-      <link>/tags/metaprogramming/</link>
-      <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/metaprogramming/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>New Functions</title>
-      <link>/tags/new-functions/</link>
-      <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/new-functions/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Nse</title>
+      <title>nse</title>
       <link>/tags/nse/</link>
       <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
       
@@ -66,16 +21,7 @@
     </item>
     
     <item>
-      <title>Plotly</title>
-      <link>/tags/plotly/</link>
-      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/plotly/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Shiny</title>
+      <title>shiny</title>
       <link>/tags/shiny/</link>
       <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
       
@@ -84,7 +30,16 @@
     </item>
     
     <item>
-      <title>Shiny Modules</title>
+      <title>automl</title>
+      <link>/tags/automl/</link>
+      <pubDate>Sun, 17 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/automl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>shiny modules</title>
       <link>/tags/shiny-modules/</link>
       <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
       
@@ -93,11 +48,56 @@
     </item>
     
     <item>
-      <title>Visualisation</title>
+      <title>functions</title>
+      <link>/tags/functions/</link>
+      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/functions/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>plotly</title>
+      <link>/tags/plotly/</link>
+      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/plotly/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>visualisation</title>
       <link>/tags/visualisation/</link>
       <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
       
       <guid>/tags/visualisation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>formula</title>
+      <link>/tags/formula/</link>
+      <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/formula/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>new functions</title>
+      <link>/tags/new-functions/</link>
+      <pubDate>Wed, 30 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/new-functions/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>metaprogramming</title>
+      <link>/tags/metaprogramming/</link>
+      <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/metaprogramming/</guid>
       <description></description>
     </item>
     

@@ -6,12 +6,40 @@
     <description>Recent content in Categories on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Mon, 15 Apr 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Ml</title>
+      <title>R</title>
+      <link>/categories/r/</link>
+      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/r/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>shiny</title>
+      <link>/categories/shiny/</link>
+      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/shiny/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tidy eval</title>
+      <link>/categories/tidy-eval/</link>
+      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/tidy-eval/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ML</title>
       <link>/categories/ml/</link>
       <pubDate>Sun, 17 Mar 2019 00:00:00 +0000</pubDate>
       
@@ -29,38 +57,11 @@
     </item>
     
     <item>
-      <title>R</title>
-      <link>/categories/r/</link>
-      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/r/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Rlang</title>
+      <title>rlang</title>
       <link>/categories/rlang/</link>
       <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/categories/rlang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Shiny</title>
-      <link>/categories/shiny/</link>
-      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/shiny/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tidy Eval</title>
-      <link>/categories/tidy-eval/</link>
-      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/tidy-eval/</guid>
       <description></description>
     </item>
     
