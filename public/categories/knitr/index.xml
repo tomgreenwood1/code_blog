@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>knitr on Tom&#39;s code blog</title>
+    <link>/categories/knitr/</link>
+    <description>Recent content in knitr on Tom&#39;s code blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 22 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/knitr/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>running rust in .Rmd</title>
+      <link>/2019/12/22/running-rust-in-rmd/</link>
+      <pubDate>Sun, 22 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/22/running-rust-in-rmd/</guid>
+      <description>I have been wanting to learn Rust for some time, but one of the things that’s been on my mind is: If I learn some good Rust, how am I going to blog about it? This site is build on blogdown, which is R markdown + Hugo, so any code is blog posts needs to be run by knitr (which is the package with runs lots of different languages and outputs the result in rmarkdown).</description>
+    </item>
+    
+  </channel>
+</rss>

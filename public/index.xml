@@ -5,8 +5,141 @@
     <description>Recent content in Tom&#39;s code blog on Tom&#39;s code blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 15 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 22 Dec 2019 00:00:00 +0000</lastBuildDate>
     <atom:link href="/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>running rust in .Rmd</title>
+      <link>/2019/12/22/running-rust-in-rmd/</link>
+      <pubDate>Sun, 22 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/22/running-rust-in-rmd/</guid>
+      <description>
+
+
+&lt;p&gt;I have been wanting to learn Rust for some time, but one of the things that’s been on my mind is: If I learn some good Rust, how am I going to blog about it? This site is build on blogdown, which is R markdown + Hugo, so any code is blog posts needs to be run by knitr (which is the package with runs lots of different languages and outputs the result in rmarkdown).&lt;/p&gt;
+&lt;p&gt;I have thought about switching to some other form of multi-language notebook, but as far as I’m aware there’s nothing with as wide a range of supported languages as knitr. Please let me know in the comments if there is!&lt;/p&gt;
+&lt;p&gt;Anyway, knitr supports building your own language engines, so I did one for Rust.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;wd_tempfile = function(...) basename(tempfile(tmpdir = &amp;#39;.&amp;#39;, ...))
+
+eng_rust = function(options) {
+  f = wd_tempfile(&amp;#39;main&amp;#39;, &amp;#39;.rs&amp;#39;)
+  xfun::write_utf8(code &amp;lt;- options$code, f)
+  on.exit(unlink(f), add = TRUE)
+ 
+  cmd = &amp;#39;/home/tom/.cargo/bin/rustc&amp;#39;
+  
+  rustc_args = sprintf(&amp;#39; %s&amp;#39;, f)
+  
+  message(&amp;#39;running: &amp;#39;, cmd, rustc_args)
+  tryCatch(
+    system2(cmd, rustc_args, stdout = TRUE, stderr = TRUE, env = options$engine.env),
+    error = function(e) {
+      if (!options$error) stop(e)
+    }
+  )
+
+  exef = sub(&amp;#39;.rs&amp;#39;, &amp;#39;&amp;#39;, f)
+  run_cmd = paste(&amp;#39;./&amp;#39;, exef, sep = &amp;#39;&amp;#39;)
+
+  extra = if (options$eval) {
+    message(&amp;#39;running: &amp;#39;, run_cmd)
+    tryCatch(
+      system2(run_cmd, stdout = TRUE, stderr = TRUE, env = options$engine.env),
+      error = function(e) {
+        if (!options$error) stop(e)
+        &amp;#39;Error in executing rust code&amp;#39;
+      }
+    )
+  }
+
+  if (options$results == &amp;#39;hide&amp;#39;) extra = NULL
+
+  knitr::engine_output(options, code, extra)  
+}
+
+knitr::knit_engines$set(rust = eng_rust)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It works&lt;/p&gt;
+&lt;pre class=&#34;rust&#34;&gt;&lt;code&gt;
+fn main() {
+    println!(&amp;quot;Hello, world!&amp;quot;);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Hello, world!&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It also works with the standard library (as you’d expect).&lt;/p&gt;
+&lt;pre class=&#34;rust&#34;&gt;&lt;code&gt;use std::iter;
+
+fn main() {
+    let v = vec![1, 2, 3, 4, 5];
+    v.iter().for_each(|x| println!(&amp;quot;{}&amp;quot;, x));
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 1
+## 2
+## 3
+## 4
+## 5&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, it wouldn’t work with additional Rust dependiencies. Cargo is the dependency management tool for Rust. So, I tried a different engine configuration, using Cargo.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;eng_rust = function(options) {
+  path = &amp;#39;src/main.rs&amp;#39;
+  xfun::write_utf8(code &amp;lt;- options$code, path)
+  on.exit(unlink(path), add = TRUE)
+ 
+  cmd = &amp;#39;/home/tom/.cargo/bin/cargo&amp;#39;
+  
+  extra = if (options$eval) {
+    message(&amp;#39;running: &amp;#39;, cmd)
+    tryCatch(
+      system2(cmd, &amp;#39;run&amp;#39;, stdout = TRUE, stderr = TRUE, env = options$engine.env),
+      error = function(e) {
+        if (!options$error) stop(e)
+        &amp;#39;Error in executing rust code&amp;#39;
+      }
+    )
+  }
+
+  if (options$results == &amp;#39;hide&amp;#39;) extra = NULL
+
+  knitr::engine_output(options, code, extra)  
+}
+
+knitr::knit_engines$set(rust = eng_rust)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With this, I can import an external library from ‘crates’ and it’ll still run nicely in r markdown. This seems useful.&lt;/p&gt;
+&lt;pre class=&#34;rust&#34;&gt;&lt;code&gt;use ferris_says::say; // from the previous step
+use std::io::{stdout, BufWriter};
+
+fn main() {
+    let stdout = stdout();
+    let out = b&amp;quot;Hello fellow Rustaceans!&amp;quot;;
+    let width = 24;
+
+    let mut writer = BufWriter::new(stdout.lock());
+    say(out, width, &amp;amp;mut writer).unwrap();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##    Compiling code-blog v0.1.0 (/home/tom/Documents/github_projects/code_blog/content/post)
+##     Finished dev [unoptimized + debuginfo] target(s) in 0.24s
+##      Running `target/debug/code-blog`
+## ----------------------------
+## | Hello fellow Rustaceans! |
+## ----------------------------
+##               \
+##                \
+##                   _~^~^~_
+##               \) /  o o  \ (/
+##                 &amp;#39;_   -   _&amp;#39;
+##                 / &amp;#39;-----&amp;#39; \&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Some caveats:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;I have hard coded the paths to rustc and cargo as they are on my machine, so this isn’t fit to be a generic engine for the knitr package just yet.&lt;/li&gt;
+&lt;li&gt;In the first engine I assumed that the machine running the code is using a linux OS. &lt;code&gt;./file&lt;/code&gt; isn’t going to work on a Windows machine.&lt;/li&gt;
+&lt;li&gt;In the second engine &lt;code&gt;src/&lt;/code&gt; and &lt;code&gt;Cargo.toml&lt;/code&gt; (with the necessary dependencies listed) have to be in the same directory as the markdown being run. Again, this works for me, but might cause issues as part of a package, because that directory structure might not always be possbile.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;TODOS:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Make at least one of the engines generic enough to submit a pull request to knitr.&lt;/li&gt;
+&lt;li&gt;Do something interesting with Rust.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>map(expr) &#43; renderUI -&gt; dynamic shiny</title>

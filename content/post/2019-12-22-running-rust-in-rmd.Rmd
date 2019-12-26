@@ -1,0 +1,138 @@
+---
+title: running rust in .Rmd
+author: Tom
+date: '2019-12-22'
+slug: running-rust-in-rmd
+categories:
+  - rust
+  - knitr
+tags: []
+---
+
+I have been wanting to learn Rust for some time, but one of the things that's been on my mind is: If I learn some good Rust, how am I going to blog about it? This site is build on blogdown, which is R markdown + Hugo, so any code is blog posts needs to be run by knitr (which is the package with runs lots of different languages and outputs the result in rmarkdown). 
+
+I have thought about switching to some other form of multi-language notebook, but as far as I'm aware there's nothing with as wide a range of supported languages as knitr. Please let me know in the comments if there is!
+
+Anyway, knitr supports building your own language engines, so I did one for Rust.
+
+```{r }
+
+wd_tempfile = function(...) basename(tempfile(tmpdir = '.', ...))
+
+eng_rust = function(options) {
+  f = wd_tempfile('main', '.rs')
+  xfun::write_utf8(code <- options$code, f)
+  on.exit(unlink(f), add = TRUE)
+ 
+  cmd = '/home/tom/.cargo/bin/rustc'
+  
+  rustc_args = sprintf(' %s', f)
+  
+  message('running: ', cmd, rustc_args)
+  tryCatch(
+    system2(cmd, rustc_args, stdout = TRUE, stderr = TRUE, env = options$engine.env),
+    error = function(e) {
+      if (!options$error) stop(e)
+    }
+  )
+
+  exef = sub('.rs', '', f)
+  run_cmd = paste('./', exef, sep = '')
+
+  extra = if (options$eval) {
+    message('running: ', run_cmd)
+    tryCatch(
+      system2(run_cmd, stdout = TRUE, stderr = TRUE, env = options$engine.env),
+      error = function(e) {
+        if (!options$error) stop(e)
+        'Error in executing rust code'
+      }
+    )
+  }
+
+  if (options$results == 'hide') extra = NULL
+
+  knitr::engine_output(options, code, extra)  
+}
+
+knitr::knit_engines$set(rust = eng_rust)
+
+```
+
+It works
+
+```{rust}
+
+fn main() {
+    println!("Hello, world!");
+}
+```
+
+It also works with the standard library (as you'd expect). 
+
+```{rust}
+use std::iter;
+
+fn main() {
+    let v = vec![1, 2, 3, 4, 5];
+    v.iter().for_each(|x| println!("{}", x));
+}
+```
+
+However, it wouldn't work with additional Rust dependiencies. Cargo is the dependency management tool for Rust. So, I tried a different engine configuration, using Cargo. 
+
+```{r}
+
+eng_rust = function(options) {
+  path = 'src/main.rs'
+  xfun::write_utf8(code <- options$code, path)
+  on.exit(unlink(path), add = TRUE)
+ 
+  cmd = '/home/tom/.cargo/bin/cargo'
+  
+  extra = if (options$eval) {
+    message('running: ', cmd)
+    tryCatch(
+      system2(cmd, 'run', stdout = TRUE, stderr = TRUE, env = options$engine.env),
+      error = function(e) {
+        if (!options$error) stop(e)
+        'Error in executing rust code'
+      }
+    )
+  }
+
+  if (options$results == 'hide') extra = NULL
+
+  knitr::engine_output(options, code, extra)  
+}
+
+knitr::knit_engines$set(rust = eng_rust)
+```
+
+With this, I can import an external library from 'crates' and it'll still run nicely in r markdown. This seems useful.
+
+```{rust}
+use ferris_says::say; // from the previous step
+use std::io::{stdout, BufWriter};
+
+fn main() {
+    let stdout = stdout();
+    let out = b"Hello fellow Rustaceans!";
+    let width = 24;
+
+    let mut writer = BufWriter::new(stdout.lock());
+    say(out, width, &mut writer).unwrap();
+}
+
+```
+
+Some caveats:
+
+1. I have hard coded the paths to rustc and cargo as they are on my machine, so this isn't fit to be a generic engine for the knitr package just yet.
+2. In the first engine I assumed that the machine running the code is using a linux OS. `./file` isn't going to work on a Windows machine.
+3. In the second engine `src/` and `Cargo.toml` (with the necessary dependencies listed) have to be in the same directory as the markdown being run. Again, this works for me, but might cause issues as part of a package, because that directory structure might not always be possbile.
+
+TODOS: 
+
+1. Make at least one of the engines generic enough to submit a pull request to knitr.
+2. Do something interesting with Rust.

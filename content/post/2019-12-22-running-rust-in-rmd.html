@@ -1,0 +1,134 @@
+---
+title: running rust in .Rmd
+author: Tom
+date: '2019-12-22'
+slug: running-rust-in-rmd
+categories:
+  - rust
+  - knitr
+tags: []
+---
+
+
+
+<p>I have been wanting to learn Rust for some time, but one of the things that’s been on my mind is: If I learn some good Rust, how am I going to blog about it? This site is build on blogdown, which is R markdown + Hugo, so any code is blog posts needs to be run by knitr (which is the package with runs lots of different languages and outputs the result in rmarkdown).</p>
+<p>I have thought about switching to some other form of multi-language notebook, but as far as I’m aware there’s nothing with as wide a range of supported languages as knitr. Please let me know in the comments if there is!</p>
+<p>Anyway, knitr supports building your own language engines, so I did one for Rust.</p>
+<pre class="r"><code>wd_tempfile = function(...) basename(tempfile(tmpdir = &#39;.&#39;, ...))
+
+eng_rust = function(options) {
+  f = wd_tempfile(&#39;main&#39;, &#39;.rs&#39;)
+  xfun::write_utf8(code &lt;- options$code, f)
+  on.exit(unlink(f), add = TRUE)
+ 
+  cmd = &#39;/home/tom/.cargo/bin/rustc&#39;
+  
+  rustc_args = sprintf(&#39; %s&#39;, f)
+  
+  message(&#39;running: &#39;, cmd, rustc_args)
+  tryCatch(
+    system2(cmd, rustc_args, stdout = TRUE, stderr = TRUE, env = options$engine.env),
+    error = function(e) {
+      if (!options$error) stop(e)
+    }
+  )
+
+  exef = sub(&#39;.rs&#39;, &#39;&#39;, f)
+  run_cmd = paste(&#39;./&#39;, exef, sep = &#39;&#39;)
+
+  extra = if (options$eval) {
+    message(&#39;running: &#39;, run_cmd)
+    tryCatch(
+      system2(run_cmd, stdout = TRUE, stderr = TRUE, env = options$engine.env),
+      error = function(e) {
+        if (!options$error) stop(e)
+        &#39;Error in executing rust code&#39;
+      }
+    )
+  }
+
+  if (options$results == &#39;hide&#39;) extra = NULL
+
+  knitr::engine_output(options, code, extra)  
+}
+
+knitr::knit_engines$set(rust = eng_rust)</code></pre>
+<p>It works</p>
+<pre class="rust"><code>
+fn main() {
+    println!(&quot;Hello, world!&quot;);
+}</code></pre>
+<pre><code>## Hello, world!</code></pre>
+<p>It also works with the standard library (as you’d expect).</p>
+<pre class="rust"><code>use std::iter;
+
+fn main() {
+    let v = vec![1, 2, 3, 4, 5];
+    v.iter().for_each(|x| println!(&quot;{}&quot;, x));
+}</code></pre>
+<pre><code>## 1
+## 2
+## 3
+## 4
+## 5</code></pre>
+<p>However, it wouldn’t work with additional Rust dependiencies. Cargo is the dependency management tool for Rust. So, I tried a different engine configuration, using Cargo.</p>
+<pre class="r"><code>eng_rust = function(options) {
+  path = &#39;src/main.rs&#39;
+  xfun::write_utf8(code &lt;- options$code, path)
+  on.exit(unlink(path), add = TRUE)
+ 
+  cmd = &#39;/home/tom/.cargo/bin/cargo&#39;
+  
+  extra = if (options$eval) {
+    message(&#39;running: &#39;, cmd)
+    tryCatch(
+      system2(cmd, &#39;run&#39;, stdout = TRUE, stderr = TRUE, env = options$engine.env),
+      error = function(e) {
+        if (!options$error) stop(e)
+        &#39;Error in executing rust code&#39;
+      }
+    )
+  }
+
+  if (options$results == &#39;hide&#39;) extra = NULL
+
+  knitr::engine_output(options, code, extra)  
+}
+
+knitr::knit_engines$set(rust = eng_rust)</code></pre>
+<p>With this, I can import an external library from ‘crates’ and it’ll still run nicely in r markdown. This seems useful.</p>
+<pre class="rust"><code>use ferris_says::say; // from the previous step
+use std::io::{stdout, BufWriter};
+
+fn main() {
+    let stdout = stdout();
+    let out = b&quot;Hello fellow Rustaceans!&quot;;
+    let width = 24;
+
+    let mut writer = BufWriter::new(stdout.lock());
+    say(out, width, &amp;mut writer).unwrap();
+}
+</code></pre>
+<pre><code>##    Compiling code-blog v0.1.0 (/home/tom/Documents/github_projects/code_blog/content/post)
+##     Finished dev [unoptimized + debuginfo] target(s) in 0.24s
+##      Running `target/debug/code-blog`
+## ----------------------------
+## | Hello fellow Rustaceans! |
+## ----------------------------
+##               \
+##                \
+##                   _~^~^~_
+##               \) /  o o  \ (/
+##                 &#39;_   -   _&#39;
+##                 / &#39;-----&#39; \</code></pre>
+<p>Some caveats:</p>
+<ol style="list-style-type: decimal">
+<li>I have hard coded the paths to rustc and cargo as they are on my machine, so this isn’t fit to be a generic engine for the knitr package just yet.</li>
+<li>In the first engine I assumed that the machine running the code is using a linux OS. <code>./file</code> isn’t going to work on a Windows machine.</li>
+<li>In the second engine <code>src/</code> and <code>Cargo.toml</code> (with the necessary dependencies listed) have to be in the same directory as the markdown being run. Again, this works for me, but might cause issues as part of a package, because that directory structure might not always be possbile.</li>
+</ol>
+<p>TODOS:</p>
+<ol style="list-style-type: decimal">
+<li>Make at least one of the engines generic enough to submit a pull request to knitr.</li>
+<li>Do something interesting with Rust.</li>
+</ol>
